@@ -1,4 +1,4 @@
-# Replie
+# Hackerlab
 
 A modern TypeScript playground for rapid prototyping and experimentation.
 
@@ -18,7 +18,7 @@ This is a working proof-of-concept. The following features are implemented:
 - [x] Three-panel layout (sidebar, blocks, output)
 - [x] Monaco editor with TypeScript/TSX support
 - [x] Block system (add, delete, different types)
-- [x] File persistence (~/.replie directory)
+- [x] File persistence (~/.hackerlab directory)
 - [x] Code transpilation via esbuild-wasm
 - [x] Sandboxed execution in iframe
 - [x] Console output capture
@@ -94,10 +94,10 @@ src/
 
 ## Data Storage
 
-Projects are stored in `~/.replie/`:
+Projects are stored in `~/.hackerlab/`:
 
 ```
-~/.replie/
+~/.hackerlab/
 ├── projects/
 │   └── my-project/
 │       ├── config.json     # Project metadata

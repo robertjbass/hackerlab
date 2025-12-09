@@ -1,0 +1,6 @@
+allowBuild: electron esbuild
+
+onlyBuiltDependencies:
+  - electron
+  - electron-winstaller
+  - esbuild
