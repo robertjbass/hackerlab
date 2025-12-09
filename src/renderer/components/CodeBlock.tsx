@@ -140,20 +140,19 @@ export function CodeBlock({
 
     setIsRunning(true)
     setHasError(false)
-    const newOutputs: OutputItem[] = []
+    setOutputs([])
 
     try {
       await executeCode({
         code: block.content,
         type: block.type,
         onOutput: (output) => {
-          newOutputs.push(output)
+          setOutputs((prev) => [...prev, output])
           if (output.type === 'error') {
             setHasError(true)
           }
         },
       })
-      setOutputs(newOutputs)
     } catch (error) {
       setHasError(true)
       setOutputs([
@@ -182,26 +181,30 @@ export function CodeBlock({
       saveTimeoutRef.current = setTimeout(() => {
         onSave(content)
       }, 500)
-
-      // Live compile if enabled
-      if (liveCompile && block.type !== 'markdown') {
-        if (liveCompileTimeoutRef.current) {
-          clearTimeout(liveCompileTimeoutRef.current)
-        }
-        liveCompileTimeoutRef.current = setTimeout(() => {
-          runCode()
-        }, 800)
-      }
     },
-    [onChange, onSave, liveCompile, block.type, runCode],
+    [onChange, onSave],
   )
 
-  // Run immediately for markdown when live compile is on
+  // Live compile effect - watches block.content directly with 2s debounce
   useEffect(() => {
-    if (liveCompile && block.type === 'markdown' && block.content.trim()) {
-      runCode()
+    if (!liveCompile || !block.content.trim()) {
+      return
     }
-  }, [liveCompile, block.type, block.content, runCode])
+
+    if (liveCompileTimeoutRef.current) {
+      clearTimeout(liveCompileTimeoutRef.current)
+    }
+
+    liveCompileTimeoutRef.current = setTimeout(() => {
+      runCode()
+    }, 1000)
+
+    return () => {
+      if (liveCompileTimeoutRef.current) {
+        clearTimeout(liveCompileTimeoutRef.current)
+      }
+    }
+  }, [liveCompile, block.content, runCode])
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {

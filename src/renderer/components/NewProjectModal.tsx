@@ -73,7 +73,6 @@ export function NewProjectModal({
           )}
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="p-6">
           <label className="block">
             <span className="text-sm font-medium text-zinc-300">
