@@ -406,7 +406,7 @@ async function main() {
   const nextConsistency = checkVersionConsistency(
     packageJson,
     'Next.js packages',
-    ['next', 'eslint-config-next', '@next/eslint-plugin-next'],
+    ['next', '@next/eslint-plugin-next'],
   )
 
   const lexicalConsistency = checkPrefixConsistency(
