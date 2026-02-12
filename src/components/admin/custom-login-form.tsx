@@ -153,8 +153,12 @@ export function CustomLoginForm() {
         router.push(callbackUrl)
         router.refresh()
       } else {
-        const data = await res.json()
-        setError(data.errors?.[0]?.message || 'Invalid credentials')
+        try {
+          const data = await res.json()
+          setError(data.errors?.[0]?.message || 'Invalid credentials')
+        } catch {
+          setError('Invalid credentials')
+        }
       }
     } catch {
       setError('An error occurred. Please try again.')

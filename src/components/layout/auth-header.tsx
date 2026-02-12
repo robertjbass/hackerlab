@@ -9,6 +9,7 @@ export async function AuthHeader() {
     if (process.env.NODE_ENV !== 'production') {
       console.error('[AuthHeader] auth() failed:', error)
     }
+    // TODO: send to error monitoring (e.g. Sentry) so auth failures are tracked in production
   }
 
   const user = session?.user

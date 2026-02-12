@@ -102,7 +102,8 @@ export function PayloadAdapter(payload: Payload): Adapter {
         const updateData: Record<string, unknown> = {}
         if (data.name) updateData.name = data.name
         if (data.email) updateData.email = data.email.toLowerCase()
-        if (data.image) updateData.googleImageUrl = data.image
+        // Auth.js adapter doesn't carry provider context — skip image updates here.
+        // Provider-specific images are set in the signIn callback instead.
 
         const user = await payload.update({
           collection: 'user',

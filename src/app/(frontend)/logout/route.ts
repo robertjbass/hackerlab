@@ -9,7 +9,8 @@ function isValidOrigin(request: Request): boolean {
 
   if (origin) return origin === expectedOrigin
   if (referer) return new URL(referer).origin === expectedOrigin
-  return false
+  // No Origin or Referer — treat as same-origin (privacy-preserving browsers)
+  return true
 }
 
 export async function POST(request: Request) {

@@ -30,6 +30,7 @@ for (const check of checks) {
     results.push({ name: check.name, passed: true, duration })
     console.log(`✓ ${check.name} passed (${(duration / 1000).toFixed(1)}s)`)
   } catch {
+    // TODO: capture error details and include in results/output for CI diagnostics
     const duration = Date.now() - start
     results.push({ name: check.name, passed: false, duration })
     console.error(`✗ ${check.name} failed (${(duration / 1000).toFixed(1)}s)`)

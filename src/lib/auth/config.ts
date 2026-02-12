@@ -95,7 +95,7 @@ export const authConfig: NextAuthConfig = {
 
         // First user to sign up becomes admin
         const { totalDocs } = await payload.count({ collection: 'user' })
-        const isFirstUser = totalDocs <= 1
+        const isFirstUser = totalDocs === 0
 
         if (docs.length > 0) {
           const existingUser = docs[0]
