@@ -99,10 +99,15 @@ export function PayloadAdapter(payload: Payload): Adapter {
         throw new Error(`PayloadAdapter.updateUser: invalid user ID "${data.id}"`)
       }
       try {
+        const updateData: Record<string, unknown> = {}
+        if (data.name) updateData.name = data.name
+        if (data.email) updateData.email = data.email.toLowerCase()
+        if (data.image) updateData.googleImageUrl = data.image
+
         const user = await payload.update({
           collection: 'user',
           id: numericId,
-          data: { ...(data.name && { name: data.name }) },
+          data: updateData,
         })
         return toAdapterUser(user)
       } catch (error) {

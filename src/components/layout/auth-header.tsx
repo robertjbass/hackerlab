@@ -5,8 +5,10 @@ export async function AuthHeader() {
   let session
   try {
     session = await auth()
-  } catch {
-    // Stale or unreadable session cookie — treat as unauthenticated
+  } catch (error) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('[AuthHeader] auth() failed:', error)
+    }
   }
 
   const user = session?.user

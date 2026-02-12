@@ -11,15 +11,9 @@ export function AuthjsStrategy(): AuthStrategy {
 
         if (!session?.user?.id) return { user: null }
 
-        const isUUID = session.user.id.includes('-')
-        if (isUUID) {
-          console.error('[AuthjsStrategy] UUID user IDs not supported')
-          return { user: null }
-        }
-
         const userId = parseInt(session.user.id, 10)
-        if (isNaN(userId)) {
-          console.error('[AuthjsStrategy] Invalid user ID value')
+        if (!Number.isInteger(userId) || userId <= 0) {
+          console.error('[AuthjsStrategy] Invalid user ID:', session.user.id)
           return { user: null }
         }
 

@@ -17,7 +17,7 @@ This file provides guidance to AI agents such as Claude Code (claude.ai/code) wh
 - All collection slugs are singular (e.g., `user`, `media`)
 - Collections use typed slugs: `CollectionConfig<'user'>`
 - Each collection directory has: `index.ts` (config), `constants.ts` (enums/options), `hooks.ts` (access helpers)
-- Access helpers (`anyone`, `admins`) live in `collections/User/hooks.ts` and are shared across collections
+- Access helpers (`anyone`, `admins`) live in `collections/shared/access.ts` and are shared across collections
 - Admin groups: User → "Admin", Media → "Assets"
 
 ## Authentication
@@ -81,7 +81,7 @@ pnpm add:ui table --overwrite
 ### Key Files
 
 - `components.json` - shadcn/ui configuration
-- `src/lib/utils.ts` - `cn()` class merging utility
+- `src/lib/cn.ts` - `cn()` class merging utility
 - `src/lib/theme.ts` - Central color palette configuration
 - `src/components/ui/` - shadcn component directory
 - `src/app/globals.css` - CSS variables (OKLCH colors)

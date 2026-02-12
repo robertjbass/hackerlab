@@ -150,7 +150,7 @@ export function CustomLoginForm() {
       })
 
       if (res.ok) {
-        router.push('/admin')
+        router.push(callbackUrl)
         router.refresh()
       } else {
         const data = await res.json()

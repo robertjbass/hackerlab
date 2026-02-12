@@ -23,6 +23,8 @@ export async function POST(request: Request) {
   cookieStore.delete('authjs.callback-url')
   cookieStore.delete('__Secure-authjs.callback-url')
   cookieStore.delete('payload-token')
+  cookieStore.delete('oauth-redirect-to')
+  cookieStore.delete('oauth-callback-url')
   const url = new URL('/', request.url)
   return NextResponse.redirect(url)
 }

@@ -93,31 +93,35 @@ export const authConfig: NextAuthConfig = {
           limit: 1,
         })
 
-        let userRole: string
+        // First user to sign up becomes admin
+        const { totalDocs } = await payload.count({ collection: 'user' })
+        const isFirstUser = totalDocs <= 1
 
         if (docs.length > 0) {
           const existingUser = docs[0]
-          userRole = existingUser.role
+          const updateData: Record<string, unknown> = {
+            [idField]: account.providerAccountId,
+            lastAuthMethod: account.provider as AuthProvider,
+            name: profileName || existingUser.name,
+            [imageField]: imageUrl || existingUser[imageField],
+          }
+          if (isFirstUser && existingUser.role !== UserRole.Admin) {
+            updateData.role = UserRole.Admin
+          }
           await payload.update({
             collection: 'user',
             id: existingUser.id,
-            data: {
-              [idField]: account.providerAccountId,
-              lastAuthMethod: account.provider as AuthProvider,
-              name: profileName || existingUser.name,
-              [imageField]: imageUrl || existingUser[imageField],
-            },
+            data: updateData,
           })
           user.id = String(existingUser.id)
         } else {
-          userRole = UserRole.User
           const newUser = await payload.create({
             collection: 'user',
             draft: false,
             data: {
               email: normalizedEmail,
               name: profileName ?? user.name ?? undefined,
-              role: UserRole.User,
+              role: isFirstUser ? UserRole.Admin : UserRole.User,
               authProvider: account.provider as AuthProvider,
               lastAuthMethod: account.provider as AuthProvider,
               [idField]: account.providerAccountId,
@@ -128,7 +132,6 @@ export const authConfig: NextAuthConfig = {
           user.id = String(newUser.id)
         }
 
-        if (userRole !== UserRole.Admin) return '/'
         return true
       } catch (error) {
         console.error('[Auth] signIn callback error:', error)

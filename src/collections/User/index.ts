@@ -1,10 +1,6 @@
-import { anyone, admins } from '@/collections/User/hooks'
+import { anyone, admins } from '@/collections/shared/access'
 import { AuthjsStrategy } from '@/lib/auth/payload-strategy'
-import {
-  UserRole,
-  userRoleOptions,
-  authProviderOptions,
-} from '@/collections/User/constants'
+import { UserRole, userRoleOptions, authProviderOptions } from '@/collections/User/constants'
 import { type CollectionConfig } from 'payload'
 
 const User: CollectionConfig<'user'> = {
