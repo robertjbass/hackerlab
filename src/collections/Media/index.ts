@@ -1,4 +1,4 @@
-import { anyone, admins } from '@/collections/User/hooks'
+import { anyone, admins } from '@/collections/shared/access'
 import { type CollectionConfig } from 'payload'
 
 const Media: CollectionConfig<'media'> = {

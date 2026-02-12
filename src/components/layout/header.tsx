@@ -51,7 +51,7 @@ export function Header({ user }: HeaderProps) {
               <span className="text-sm text-muted-foreground">
                 {user.name || user.email}
               </span>
-              <form action="/logout" method="GET">
+              <form action="/logout" method="POST">
                 <Button type="submit" variant="ghost" size="sm">
                   <LogOut className="mr-2 h-4 w-4" />
                   Sign out
@@ -118,7 +118,7 @@ export function Header({ user }: HeaderProps) {
                   <span className="text-base text-muted-foreground">
                     {user.name || user.email}
                   </span>
-                  <form action="/logout" method="GET">
+                  <form action="/logout" method="POST">
                     <Button
                       type="submit"
                       variant="ghost"

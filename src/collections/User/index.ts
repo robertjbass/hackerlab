@@ -146,6 +146,10 @@ const User: CollectionConfig<'user'> = {
       label: 'Email Login Token',
       type: 'text',
       index: true,
+      access: {
+        read: admins,
+        update: admins,
+      },
       admin: {
         hidden: true,
         readOnly: true,
@@ -155,6 +159,10 @@ const User: CollectionConfig<'user'> = {
       name: 'emailLoginTokenExpires',
       label: 'Email Login Token Expires',
       type: 'date',
+      access: {
+        read: admins,
+        update: admins,
+      },
       admin: {
         hidden: true,
         readOnly: true,

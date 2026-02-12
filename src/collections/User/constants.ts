@@ -10,7 +10,7 @@ const userRoleLabels = {
   [UserRole.User]: 'User',
 } as const
 
-export const userRoleOptions: Option[] = [
+export const userRoleOptions = [
   { label: userRoleLabels[UserRole.Admin], value: UserRole.Admin },
   { label: userRoleLabels[UserRole.User], value: UserRole.User },
 ] as const satisfies Option[]
@@ -27,7 +27,7 @@ const authProviderLabels = {
   [AuthProvider.Email]: 'Email',
 } as const
 
-export const authProviderOptions: Option[] = [
+export const authProviderOptions = [
   { label: authProviderLabels[AuthProvider.Google], value: AuthProvider.Google },
   { label: authProviderLabels[AuthProvider.GitHub], value: AuthProvider.GitHub },
   { label: authProviderLabels[AuthProvider.Email], value: AuthProvider.Email },

@@ -20,13 +20,16 @@ function generateRandomPassword(): string {
   return randomBytes(32).toString('base64')
 }
 
-const AUTH_SECRET = process.env.AUTH_SECRET
-if (!AUTH_SECRET) {
-  throw new Error('AUTH_SECRET environment variable is required for token hashing')
+function getAuthSecret(): string {
+  const secret = process.env.AUTH_SECRET
+  if (!secret) {
+    throw new Error('AUTH_SECRET environment variable is required for token hashing')
+  }
+  return secret
 }
 
 function hashToken(token: string): string {
-  return createHmac('sha256', AUTH_SECRET!).update(token).digest('hex')
+  return createHmac('sha256', getAuthSecret()).update(token).digest('hex')
 }
 
 export function PayloadAdapter(payload: Payload): Adapter {
@@ -92,7 +95,9 @@ export function PayloadAdapter(payload: Payload): Adapter {
 
     async updateUser(data) {
       const numericId = parseInt(data.id, 10)
-      if (!Number.isInteger(numericId)) return null as unknown as AdapterUser
+      if (!Number.isInteger(numericId)) {
+        throw new Error(`PayloadAdapter.updateUser: invalid user ID "${data.id}"`)
+      }
       try {
         const user = await payload.update({
           collection: 'user',
@@ -101,8 +106,10 @@ export function PayloadAdapter(payload: Payload): Adapter {
         })
         return toAdapterUser(user)
       } catch (error) {
-        console.error('[PayloadAdapter] Error updating user:', error)
-        return null as unknown as AdapterUser
+        throw new Error(
+          `PayloadAdapter.updateUser: failed for user ${data.id}`,
+          { cause: error },
+        )
       }
     },
 

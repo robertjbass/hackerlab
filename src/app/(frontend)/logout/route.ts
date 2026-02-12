@@ -1,7 +1,22 @@
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 
-export async function GET(request: Request) {
+function isValidOrigin(request: Request): boolean {
+  const origin = request.headers.get('origin')
+  const referer = request.headers.get('referer')
+  const requestUrl = new URL(request.url)
+  const expectedOrigin = requestUrl.origin
+
+  if (origin) return origin === expectedOrigin
+  if (referer) return new URL(referer).origin === expectedOrigin
+  return false
+}
+
+export async function POST(request: Request) {
+  if (!isValidOrigin(request)) {
+    return new NextResponse('Forbidden', { status: 403 })
+  }
+
   const cookieStore = await cookies()
   cookieStore.delete('authjs.session-token')
   cookieStore.delete('__Secure-authjs.session-token')
