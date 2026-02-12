@@ -18,6 +18,7 @@ const execAsync = promisify(exec)
 
 const REPEAT_WIDTH = 50
 const CONSISTENCY_ONLY = process.argv.includes('--consistency-only')
+const SILENT_PASS = !!process.env.CALLED_FROM_CHECK
 
 type PackageJson = {
   dependencies?: Record<string, string>
@@ -461,9 +462,11 @@ async function main() {
 
     if (hasInconsistency) logConsistencyFailure(consistencyChecks)
 
-    console.log(
-      '\n' + chalk.green.bold('✅ All consistency checks passed') + '\n',
-    )
+    if (!SILENT_PASS) {
+      console.log(
+        '\n' + chalk.green.bold('✅ All consistency checks passed') + '\n',
+      )
+    }
     return
   }
 
@@ -686,7 +689,9 @@ async function main() {
 
   if (hasInconsistency) logConsistencyFailure(consistencyChecks)
 
-  console.log(chalk.green.bold('✅ All version checks passed') + '\n')
+  if (!SILENT_PASS) {
+    console.log(chalk.green.bold('✅ All version checks passed') + '\n')
+  }
 }
 
 main().catch(console.error)
