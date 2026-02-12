@@ -93,25 +93,17 @@ export const authConfig: NextAuthConfig = {
           limit: 1,
         })
 
-        // First user to sign up becomes admin
-        const { totalDocs } = await payload.count({ collection: 'user' })
-        const isFirstUser = totalDocs === 0
-
         if (docs.length > 0) {
           const existingUser = docs[0]
-          const updateData: Record<string, unknown> = {
-            [idField]: account.providerAccountId,
-            lastAuthMethod: account.provider as AuthProvider,
-            name: profileName || existingUser.name,
-            [imageField]: imageUrl || existingUser[imageField],
-          }
-          if (isFirstUser && existingUser.role !== UserRole.Admin) {
-            updateData.role = UserRole.Admin
-          }
           await payload.update({
             collection: 'user',
             id: existingUser.id,
-            data: updateData,
+            data: {
+              [idField]: account.providerAccountId,
+              lastAuthMethod: account.provider as AuthProvider,
+              name: profileName || existingUser.name,
+              [imageField]: imageUrl || existingUser[imageField],
+            },
           })
           user.id = String(existingUser.id)
         } else {
@@ -121,7 +113,7 @@ export const authConfig: NextAuthConfig = {
             data: {
               email: normalizedEmail,
               name: profileName ?? user.name ?? undefined,
-              role: isFirstUser ? UserRole.Admin : UserRole.User,
+              role: UserRole.User,
               authProvider: account.provider as AuthProvider,
               lastAuthMethod: account.provider as AuthProvider,
               [idField]: account.providerAccountId,
@@ -130,6 +122,22 @@ export const authConfig: NextAuthConfig = {
             },
           })
           user.id = String(newUser.id)
+        }
+
+        // First user to sign up becomes admin — check for existing admins
+        // rather than total count to narrow the race window
+        const userId = parseInt(user.id, 10)
+        const { docs: admins } = await payload.find({
+          collection: 'user',
+          where: { role: { equals: UserRole.Admin } },
+          limit: 1,
+        })
+        if (admins.length === 0) {
+          await payload.update({
+            collection: 'user',
+            id: userId,
+            data: { role: UserRole.Admin },
+          })
         }
 
         return true

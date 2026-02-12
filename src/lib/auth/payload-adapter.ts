@@ -202,8 +202,8 @@ export function PayloadAdapter(payload: Payload): Adapter {
         })
         if (docs.length === 0) return null
         const user = docs[0]
-        if (!user.emailLoginTokenExpires) return null
-        const expires = new Date(user.emailLoginTokenExpires)
+        const expires = new Date(user.emailLoginTokenExpires as string)
+        if (isNaN(expires.getTime()) || expires <= new Date()) return null
         await payload.update({
           collection: 'user',
           id: user.id,

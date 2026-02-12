@@ -223,13 +223,21 @@ function checkVersionConsistency(
   pkg: PackageJson,
   groupName: string,
   packageNames: string[],
+  options: { matchMajorMinor?: boolean } = {},
 ): ConsistencyCheck {
   const packages = packageNames.map((name) => ({
     name,
     version: getPackageJsonVersion(pkg, name),
   }))
   const presentPackages = packages.filter((p) => p.version !== null)
-  const versions = presentPackages.map((p) => stripSemverRange(p.version!))
+  const versions = presentPackages.map((p) => {
+    const v = stripSemverRange(p.version!)
+    if (options.matchMajorMinor) {
+      const parsed = parseVersion(v)
+      return parsed ? `${parsed.major}.${parsed.minor}` : v
+    }
+    return v
+  })
   const uniqueVersions = [...new Set(versions)]
 
   return {
@@ -360,6 +368,7 @@ async function main() {
     packageJson,
     'React packages',
     ['react', 'react-dom', '@types/react', '@types/react-dom'],
+    { matchMajorMinor: true },
   )
 
   const nextConsistency = checkVersionConsistency(

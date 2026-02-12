@@ -31,7 +31,7 @@ export default function FrontendLayout({ children }: FrontendLayoutProps) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <Script strategy="beforeInteractive" id="scroll-restore">
+        <Script id="scroll-restore">
           {`history.scrollRestoration = "manual"`}
         </Script>
       </head>

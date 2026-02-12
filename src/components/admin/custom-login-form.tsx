@@ -154,13 +154,20 @@ export function CustomLoginForm() {
         router.refresh()
       } else {
         try {
-          const data = await res.json()
-          setError(data.errors?.[0]?.message || 'Invalid credentials')
+          const data: unknown = await res.json()
+          const message =
+            (data as { errors?: { message?: string }[] }).errors?.[0]?.message
+          setError(message || 'Invalid credentials')
         } catch {
           setError('Invalid credentials')
         }
       }
-    } catch {
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : 'An error occurred'
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('[CustomLoginForm] login failed:', message)
+      }
       setError('An error occurred. Please try again.')
     } finally {
       setLoading(false)

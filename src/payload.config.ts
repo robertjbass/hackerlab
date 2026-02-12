@@ -77,9 +77,7 @@ export default buildConfig({
       connectionString: process.env.DATABASE_URL,
     },
     push: devDbPush,
-    ...(runMigrations && {
-      prodMigrations: migrations,
-    }),
+    prodMigrations: runMigrations ? migrations : undefined,
   }),
   sharp,
 })
