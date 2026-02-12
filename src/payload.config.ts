@@ -1,70 +1,85 @@
 import path from 'path'
-import sharp from 'sharp'
-import { postgresAdapter } from '@payloadcms/db-postgres'
-import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
-import { lexicalEditor } from '@payloadcms/richtext-lexical'
-import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
-import { authjsPlugin } from 'payload-authjs'
-import { authConfig } from '@/lib/auth.config'
-import { Users, Media } from '@/collections'
+import { buildConfig } from 'payload'
+import { postgresAdapter } from '@payloadcms/db-postgres'
+import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import sharp from 'sharp'
+import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
+
+import User from '@/collections/User'
+import Media from '@/collections/Media'
+import { migrations } from '@/migrations'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
-const PAYLOAD_SECRET = process.env.PAYLOAD_SECRET
-const DATABASE_URL = process.env.DATABASE_URL
-const BLOB_PREFIX = process.env.BLOB_PREFIX
-const BLOB_READ_WRITE_TOKEN = process.env.BLOB_READ_WRITE_TOKEN
-const NEXT_PUBLIC_SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+// DEV_DB_PUSH=true in .env enables push mode (auto-sync schema, no migrations)
+// This is independent of NODE_ENV so local builds work against push-mode databases
+const devDbPush = process.env.DEV_DB_PUSH === 'true'
+const runMigrations = !devDbPush
 
-if (
-  !PAYLOAD_SECRET ||
-  !DATABASE_URL ||
-  !BLOB_PREFIX ||
-  !BLOB_READ_WRITE_TOKEN
-) {
-  throw new Error('Missing environment variables')
+if (!process.env.DATABASE_URL) {
+  throw new Error(
+    'DATABASE_URL environment variable is required. Set a PostgreSQL connection string.',
+  )
 }
 
-const collections = [Users, Media]
+if (!process.env.PAYLOAD_SECRET) {
+  throw new Error(
+    'PAYLOAD_SECRET environment variable is required. Generate one with: openssl rand -base64 32',
+  )
+}
+
+if (!process.env.BLOB_READ_WRITE_TOKEN) {
+  throw new Error(
+    'BLOB_READ_WRITE_TOKEN environment variable is required. Create a Vercel Blob store and copy the token.',
+  )
+}
+
+if (!process.env.BLOB_PREFIX) {
+  throw new Error(
+    'BLOB_PREFIX environment variable is required (e.g., hackerlab_local, hackerlab_dev, hackerlab_prod).',
+  )
+}
 
 export default buildConfig({
-  serverURL: NEXT_PUBLIC_SITE_URL,
   admin: {
-    user: Users.slug,
+    user: 'user',
     importMap: {
       baseDir: path.resolve(dirname),
     },
     components: {
       views: {
         login: {
-          Component: '@/components/admin/login#CustomLoginForm',
+          Component: '@/components/admin/custom-login-form.tsx#CustomLoginForm',
         },
       },
     },
   },
-  collections,
-  editor: lexicalEditor(),
-  secret: PAYLOAD_SECRET,
-  typescript: {
-    outputFile: path.resolve(dirname, 'payload-types.ts'),
-  },
-  db: postgresAdapter({
-    pool: { connectionString: DATABASE_URL },
-    push: process.env.NODE_ENV === 'development',
-  }),
-  sharp: sharp as any, // sharp types are not compatible with PayloadCMS expected types
+  collections: [User, Media],
   plugins: [
     vercelBlobStorage({
       collections: {
         media: {
-          prefix: BLOB_PREFIX,
+          prefix: process.env.BLOB_PREFIX,
         },
       },
-      token: BLOB_READ_WRITE_TOKEN,
+      token: process.env.BLOB_READ_WRITE_TOKEN,
     }),
-    authjsPlugin({ authjsConfig: authConfig, enableLocalStrategy: true }),
   ],
+  editor: lexicalEditor(),
+  secret: process.env.PAYLOAD_SECRET,
+  typescript: {
+    outputFile: path.resolve(dirname, 'payload-types.ts'),
+  },
+  db: postgresAdapter({
+    pool: {
+      connectionString: process.env.DATABASE_URL,
+    },
+    push: devDbPush,
+    ...(runMigrations && {
+      prodMigrations: migrations,
+    }),
+  }),
+  sharp,
 })

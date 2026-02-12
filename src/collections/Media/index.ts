@@ -1,16 +1,34 @@
-import type { CollectionConfig } from 'payload'
+import { anyone, admins } from '@/collections/User/hooks'
+import { type CollectionConfig } from 'payload'
 
-export const Media: CollectionConfig = {
+const Media: CollectionConfig<'media'> = {
   slug: 'media',
+  admin: {
+    group: 'Assets',
+    defaultColumns: [
+      'filename',
+      'alt',
+      'createdAt',
+      'filesize',
+      'width',
+      'height',
+    ],
+  },
+  upload: true,
   access: {
-    read: () => true,
+    read: anyone,
+    create: admins,
+    update: admins,
+    delete: admins,
   },
   fields: [
     {
       name: 'alt',
+      label: 'Alt Text',
       type: 'text',
       required: true,
     },
   ],
-  upload: true,
 }
+
+export default Media

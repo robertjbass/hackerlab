@@ -63,11 +63,11 @@ export type SupportedTimezones =
 
 export interface Config {
   auth: {
-    users: UserAuthOperations;
+    user: UserAuthOperations;
   };
   blocks: {};
   collections: {
-    users: User;
+    user: User;
     media: Media;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -76,7 +76,7 @@ export interface Config {
   };
   collectionsJoins: {};
   collectionsSelect: {
-    users: UsersSelect<false> | UsersSelect<true>;
+    user: UserSelect<false> | UserSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -90,9 +90,7 @@ export interface Config {
   globals: {};
   globalsSelect: {};
   locale: null;
-  user: User & {
-    collection: 'users';
-  };
+  user: User;
   jobs: {
     tasks: unknown;
     workflows: unknown;
@@ -118,23 +116,36 @@ export interface UserAuthOperations {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users".
+ * via the `definition` "user".
  */
 export interface User {
-  id: string;
-  emailVerified?: string | null;
+  id: number;
   name?: string | null;
-  image?: string | null;
   role: 'admin' | 'user';
-  authProvider?: ('github' | 'email') | null;
-  accounts?:
-    | {
-        provider: string;
-        providerAccountId: string;
-        type: 'oidc' | 'oauth' | 'email' | 'webauthn';
-        id?: string | null;
-      }[]
-    | null;
+  /**
+   * Original signup method
+   */
+  authProvider?: ('google' | 'github' | 'email') | null;
+  /**
+   * Most recent login method
+   */
+  lastAuthMethod?: ('google' | 'github' | 'email') | null;
+  /**
+   * User-uploaded avatar image
+   */
+  avatar?: (number | null) | Media;
+  googleImageUrl?: string | null;
+  githubImageUrl?: string | null;
+  /**
+   * Google OAuth subject ID for account linking
+   */
+  googleId?: string | null;
+  /**
+   * GitHub OAuth user ID for account linking
+   */
+  githubId?: string | null;
+  emailLoginToken?: string | null;
+  emailLoginTokenExpires?: string | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -144,14 +155,8 @@ export interface User {
   hash?: string | null;
   loginAttempts?: number | null;
   lockUntil?: string | null;
-  sessions?:
-    | {
-        id: string;
-        createdAt?: string | null;
-        expiresAt: string;
-      }[]
-    | null;
   password?: string | null;
+  collection: 'user';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -198,8 +203,8 @@ export interface PayloadLockedDocument {
   id: number;
   document?:
     | ({
-        relationTo: 'users';
-        value: string | User;
+        relationTo: 'user';
+        value: number | User;
       } | null)
     | ({
         relationTo: 'media';
@@ -207,8 +212,8 @@ export interface PayloadLockedDocument {
       } | null);
   globalSlug?: string | null;
   user: {
-    relationTo: 'users';
-    value: string | User;
+    relationTo: 'user';
+    value: number | User;
   };
   updatedAt: string;
   createdAt: string;
@@ -220,8 +225,8 @@ export interface PayloadLockedDocument {
 export interface PayloadPreference {
   id: number;
   user: {
-    relationTo: 'users';
-    value: string | User;
+    relationTo: 'user';
+    value: number | User;
   };
   key?: string | null;
   value?:
@@ -249,23 +254,20 @@ export interface PayloadMigration {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users_select".
+ * via the `definition` "user_select".
  */
-export interface UsersSelect<T extends boolean = true> {
-  id?: T;
-  emailVerified?: T;
+export interface UserSelect<T extends boolean = true> {
   name?: T;
-  image?: T;
   role?: T;
   authProvider?: T;
-  accounts?:
-    | T
-    | {
-        provider?: T;
-        providerAccountId?: T;
-        type?: T;
-        id?: T;
-      };
+  lastAuthMethod?: T;
+  avatar?: T;
+  googleImageUrl?: T;
+  githubImageUrl?: T;
+  googleId?: T;
+  githubId?: T;
+  emailLoginToken?: T;
+  emailLoginTokenExpires?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -275,13 +277,6 @@ export interface UsersSelect<T extends boolean = true> {
   hash?: T;
   loginAttempts?: T;
   lockUntil?: T;
-  sessions?:
-    | T
-    | {
-        id?: T;
-        createdAt?: T;
-        expiresAt?: T;
-      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

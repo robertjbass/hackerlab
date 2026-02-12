@@ -1,8 +1,13 @@
 import { Header } from './header'
-import { getPayloadSession } from 'payload-authjs'
+import { auth } from '@/lib/auth'
 
 export async function AuthHeader() {
-  const session = await getPayloadSession()
+  let session
+  try {
+    session = await auth()
+  } catch {
+    // Stale or unreadable session cookie — treat as unauthenticated
+  }
 
   const user = session?.user
     ? {

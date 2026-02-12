@@ -1,7 +1,11 @@
 'use server'
 
-import { signIn } from '@/lib/auth'
+import { signIn, signOut, auth } from '@/lib/auth'
 
-export async function signInWithGitHub() {
-  await signIn('github', { redirectTo: '/admin' })
+export async function signInWithProvider(provider: string, callbackUrl: string) {
+  const session = await auth()
+  if (session) {
+    await signOut({ redirect: false })
+  }
+  await signIn(provider, { redirectTo: callbackUrl })
 }

@@ -56,6 +56,9 @@ const Twitter = forwardRef<SVGSVGElement, IconProps>(
 )
 Twitter.displayName = 'Twitter'
 
+export { Google } from '@/components/icons/google'
+export { GithubIcon } from '@/components/icons/github'
+
 export {
   ArrowRight,
   Boxes,
