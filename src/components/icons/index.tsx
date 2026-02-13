@@ -56,6 +56,11 @@ const Twitter = forwardRef<SVGSVGElement, IconProps>(
 )
 Twitter.displayName = 'Twitter'
 
+export { Google } from '@/components/icons/google'
+// GithubIcon: filled brand logo (for OAuth buttons in admin panel)
+export { GithubIcon } from '@/components/icons/github'
+
+// Github: outline/stroke icon (for UI elements like links and buttons)
 export {
   ArrowRight,
   Boxes,

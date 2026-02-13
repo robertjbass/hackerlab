@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { Github, LogOut, Menu, Terminal, X } from '@/components/icons'
+import { LogOut, Menu, Terminal, X } from '@/components/icons'
 import { Button } from '@/components/ui/button'
 
 type HeaderProps = {
@@ -46,20 +46,12 @@ export function Header({ user }: HeaderProps) {
           </div>
         </div>
         <div className="hidden lg:flex lg:items-center lg:gap-x-4">
-          <Link
-            href="https://github.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-muted-foreground transition-colors hover:text-foreground"
-          >
-            <Github className="h-5 w-5" />
-          </Link>
           {user ? (
             <>
               <span className="text-sm text-muted-foreground">
                 {user.name || user.email}
               </span>
-              <form action="/api/auth/signout" method="POST">
+              <form action="/logout" method="POST">
                 <Button type="submit" variant="ghost" size="sm">
                   <LogOut className="mr-2 h-4 w-4" />
                   Sign out
@@ -126,7 +118,7 @@ export function Header({ user }: HeaderProps) {
                   <span className="text-base text-muted-foreground">
                     {user.name || user.email}
                   </span>
-                  <form action="/api/auth/signout" method="POST">
+                  <form action="/logout" method="POST">
                     <Button
                       type="submit"
                       variant="ghost"

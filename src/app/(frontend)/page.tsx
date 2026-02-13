@@ -1,8 +1,8 @@
-import { Hero, Features, CTA } from '@/components/landing'
+import { Hero } from '@/components/landing/hero'
+import { Features } from '@/components/landing/features'
+import { CTA } from '@/components/landing/cta'
 
-export const dynamic = 'force-dynamic'
-
-export default async function HomePage() {
+export default function HomePage() {
   return (
     <>
       <Hero />

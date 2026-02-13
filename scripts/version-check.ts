@@ -18,6 +18,7 @@ const execAsync = promisify(exec)
 
 const REPEAT_WIDTH = 50
 const CONSISTENCY_ONLY = process.argv.includes('--consistency-only')
+const SILENT_PASS = !!process.env.CALLED_FROM_CHECK
 
 type PackageJson = {
   dependencies?: Record<string, string>
@@ -25,10 +26,9 @@ type PackageJson = {
 }
 
 type VersionInfo = {
-  packageJson: string | null // Version specified in package.json (with semver range)
-  installed: string | null // Actually installed version
-  latest: string | null // Latest stable on registry
-  canary?: string | null // Latest canary on registry
+  packageJson: string | null
+  installed: string | null
+  latest: string | null
 }
 
 type PrereleasePackage = {
@@ -120,12 +120,11 @@ type ParsedVersion = {
   major: number
   minor: number
   patch: number
-  prerelease: string | null // e.g., "canary.16", "beta.1", "rc.2"
-  prereleaseNum: number | null // e.g., 16 from "canary.16"
+  prerelease: string | null
+  prereleaseNum: number | null
 }
 
 function parseVersion(version: string): ParsedVersion | null {
-  // Handle versions like "16.1.0-canary.16", "19.2.3", "3.68.5"
   const match = version.match(/^(\d+)\.(\d+)\.(\d+)(?:-([a-z]+)\.?(\d+)?)?$/i)
   if (!match) return null
 
@@ -139,28 +138,22 @@ function parseVersion(version: string): ParsedVersion | null {
 }
 
 /**
- * Compare two versions and determine upgrade status
- * Returns:
- *  - 'upgrade-available': A higher stable version exists
- *  - 'stable-available': On canary/beta, stable version of same major.minor is available
- *  - 'canary-available': A newer canary version exists
- *  - 'up-to-date': No upgrade needed
- *  - 'newer': Installed is newer than latest (e.g., on canary ahead of stable)
+ * Compare two versions and determine upgrade status.
+ * Always recommends stable — never suggests canary/beta/rc builds.
  */
 function compareVersions(
   installed: string,
   latest: string,
-  canary?: string | null,
-):
-  | 'upgrade-available'
-  | 'stable-available'
-  | 'canary-available'
-  | 'up-to-date'
-  | 'newer' {
+): 'upgrade-available' | 'stable-available' | 'up-to-date' | 'newer' | 'parse-error' {
   const inst = parseVersion(installed)
   const lat = parseVersion(latest)
 
-  if (!inst || !lat) return 'up-to-date'
+  if (!inst || !lat) {
+    console.warn(
+      `[version-check] Could not parse versions — installed: "${installed}", latest: "${latest}"`,
+    )
+    return 'parse-error'
+  }
 
   const onPrerelease = inst.prerelease !== null
   const latestIsStable = lat.prerelease === null
@@ -170,58 +163,33 @@ function compareVersions(
     return a.patch - b.patch
   }
 
-  const coreComparison = compareCore(inst, lat)
-
-  if (onPrerelease) {
-    if (latestIsStable && coreComparison <= 0) return 'stable-available'
-
-    if (canary) {
-      const can = parseVersion(canary)
-      if (can && can.prerelease) {
-        const canaryCore = compareCore(inst, can)
-        if (canaryCore < 0) {
-          return 'canary-available'
-        }
-        if (
-          canaryCore === 0 &&
-          inst.prereleaseNum !== null &&
-          can.prereleaseNum !== null &&
-          can.prereleaseNum > inst.prereleaseNum
-        ) {
-          return 'canary-available'
-        }
-      }
-    }
-
-    return 'up-to-date'
+  // On prerelease? Recommend stable only if same major version exists
+  // (e.g., next-auth@5.0.0-beta has no v5 stable — don't recommend v4)
+  if (onPrerelease && latestIsStable && inst.major === lat.major) {
+    return 'stable-available'
   }
+
+  const coreComparison = compareCore(inst, lat)
 
   if (latestIsStable && coreComparison < 0) return 'upgrade-available'
   if (coreComparison > 0) return 'newer'
   return 'up-to-date'
 }
 
-function formatComparison(
-  name: string,
-  info: VersionInfo,
-  showCanary = false,
-): string {
+function formatComparison(name: string, info: VersionInfo): string {
   const packageJsonVer = info.packageJson || 'not specified'
   const installed = info.installed || 'not installed'
   const latest = info.latest || 'unknown'
 
-  // Compare installed version with latest using semver-aware comparison
   const status =
     info.installed && info.latest
-      ? compareVersions(info.installed, info.latest, info.canary)
-      : 'up-to-date'
+      ? compareVersions(info.installed, info.latest)
+      : 'parse-error'
 
   const lines: string[] = []
 
-  // First line: package name and package.json version
   const line1 = `${chalk.bold.cyan(name.padEnd(12))} ${chalk.dim('package.json:')} ${chalk.white(packageJsonVer.padEnd(20))}`
 
-  // Second line: installed and latest
   let line2 = `${''.padEnd(12)} ${chalk.dim('installed:')}    ${chalk.white(installed.padEnd(20))} ${chalk.dim('latest:')} ${chalk.white(latest)}`
 
   switch (status) {
@@ -231,25 +199,19 @@ function formatComparison(
     case 'stable-available':
       line2 += ' ' + chalk.red.bold('🚨 STABLE RELEASE AVAILABLE - UPDATE NOW')
       break
-    case 'canary-available':
-      line2 += ' ' + chalk.blue('📦 newer canary available')
-      break
     case 'newer':
       line2 += ' ' + chalk.magenta('🔮 (ahead of stable)')
       break
     case 'up-to-date':
       line2 += ' ' + chalk.green('✅')
       break
+    case 'parse-error':
+      line2 += ' ' + chalk.yellow('⚠️  could not parse version')
+      break
   }
 
   lines.push(line1)
   lines.push(line2)
-
-  if (showCanary && info.canary) {
-    lines.push(
-      `${''.padEnd(12)} ${''.padEnd(35)} ${chalk.dim('canary:')} ${chalk.dim(info.canary)}`,
-    )
-  }
 
   return lines.join('\n')
 }
@@ -264,13 +226,21 @@ function checkVersionConsistency(
   pkg: PackageJson,
   groupName: string,
   packageNames: string[],
+  options: { matchMajorMinor?: boolean } = {},
 ): ConsistencyCheck {
   const packages = packageNames.map((name) => ({
     name,
     version: getPackageJsonVersion(pkg, name),
   }))
   const presentPackages = packages.filter((p) => p.version !== null)
-  const versions = presentPackages.map((p) => stripSemverRange(p.version!))
+  const versions = presentPackages.map((p) => {
+    const v = stripSemverRange(p.version!)
+    if (options.matchMajorMinor) {
+      const parsed = parseVersion(v)
+      return parsed ? `${parsed.major}.${parsed.minor}` : v
+    }
+    return v
+  })
   const uniqueVersions = [...new Set(versions)]
 
   return {
@@ -359,9 +329,10 @@ function logConsistencyFailure(consistencyChecks: ConsistencyCheck[]): never {
 
 function getPrereleaseStatusText(pkg: PrereleaseCheckResult): string {
   if (pkg.stableAvailable) return chalk.red.bold('🚨 STABLE AVAILABLE')
-  if (pkg.latest && compareVersions(pkg.installed, pkg.latest) === 'newer') {
-    return chalk.magenta('🔮 (ahead of stable)')
-  }
+  if (!pkg.latest) return chalk.yellow('⚠️  could not fetch latest')
+  const status = compareVersions(pkg.installed, pkg.latest)
+  if (status === 'newer') return chalk.magenta('🔮 (ahead of stable)')
+  if (status === 'parse-error') return chalk.yellow('⚠️  could not parse version')
   return chalk.green('✅')
 }
 
@@ -401,12 +372,13 @@ async function main() {
     packageJson,
     'React packages',
     ['react', 'react-dom', '@types/react', '@types/react-dom'],
+    { matchMajorMinor: true },
   )
 
   const nextConsistency = checkVersionConsistency(
     packageJson,
     'Next.js packages',
-    ['next', 'eslint-config-next', '@next/eslint-plugin-next'],
+    ['next', '@next/eslint-plugin-next'],
   )
 
   const lexicalConsistency = checkPrefixConsistency(
@@ -444,7 +416,7 @@ async function main() {
       console.log(chalk.bold.magenta('  PRERELEASE PACKAGES'))
       console.log(chalk.dim('═'.repeat(REPEAT_WIDTH)) + '\n')
       console.log(
-        chalk.blue('ℹ️  The following packages are on prerelease versions:'),
+        chalk.red('⚠️  The following packages are on prerelease versions:'),
       )
       for (const pkg of prereleasePackages) {
         console.log(
@@ -461,28 +433,26 @@ async function main() {
 
     if (hasInconsistency) logConsistencyFailure(consistencyChecks)
 
-    console.log(
-      '\n' + chalk.green.bold('✅ All consistency checks passed') + '\n',
-    )
+    if (!SILENT_PASS) {
+      console.log(
+        '\n' + chalk.green.bold('✅ All consistency checks passed') + '\n',
+      )
+    }
     return
   }
 
-  // Full mode: fetch versions from registry in parallel
+  // Full mode: fetch versions from registry (only stable tags)
   console.log(chalk.dim('Fetching version information...') + '\n')
 
-  // Parallel fetch all versions
   const [
     payloadInstalled,
     payloadLatest,
     nextInstalled,
     nextLatest,
-    nextCanary,
     reactInstalled,
     reactLatest,
-    reactCanary,
     reactDomInstalled,
     reactDomLatest,
-    reactDomCanary,
     typescriptInstalled,
     typescriptLatest,
   ] = await Promise.all([
@@ -490,13 +460,10 @@ async function main() {
     getRegistryVersionAsync('payload'),
     getInstalledVersionAsync('next'),
     getRegistryVersionAsync('next'),
-    getRegistryVersionAsync('next', 'canary'),
     getInstalledVersionAsync('react'),
     getRegistryVersionAsync('react'),
-    getRegistryVersionAsync('react', 'canary'),
     getInstalledVersionAsync('react-dom'),
     getRegistryVersionAsync('react-dom'),
-    getRegistryVersionAsync('react-dom', 'canary'),
     getInstalledVersionAsync('typescript'),
     getRegistryVersionAsync('typescript'),
   ])
@@ -511,21 +478,18 @@ async function main() {
     packageJson: getPackageJsonVersion(packageJson, 'next'),
     installed: nextInstalled,
     latest: nextLatest,
-    canary: nextCanary,
   }
 
   const react: VersionInfo = {
     packageJson: getPackageJsonVersion(packageJson, 'react'),
     installed: reactInstalled,
     latest: reactLatest,
-    canary: reactCanary,
   }
 
   const reactDom: VersionInfo = {
     packageJson: getPackageJsonVersion(packageJson, 'react-dom'),
     installed: reactDomInstalled,
     latest: reactDomLatest,
-    canary: reactDomCanary,
   }
 
   const typescript: VersionInfo = {
@@ -540,11 +504,11 @@ async function main() {
 
   console.log(formatComparison('payload', payload))
   console.log('')
-  console.log(formatComparison('next', next, true))
+  console.log(formatComparison('next', next))
   console.log('')
-  console.log(formatComparison('react', react, true))
+  console.log(formatComparison('react', react))
   console.log('')
-  console.log(formatComparison('react-dom', reactDom, true))
+  console.log(formatComparison('react-dom', reactDom))
   console.log('')
   console.log(formatComparison('typescript', typescript))
 
@@ -622,16 +586,14 @@ async function main() {
     ({ info }) =>
       info.installed &&
       info.latest &&
-      compareVersions(info.installed, info.latest, info.canary) ===
-        'upgrade-available',
+      compareVersions(info.installed, info.latest) === 'upgrade-available',
   )
 
   const coreStableFromPrerelease = corePackages.filter(
     ({ info }) =>
       info.installed &&
       info.latest &&
-      compareVersions(info.installed, info.latest, info.canary) ===
-        'stable-available',
+      compareVersions(info.installed, info.latest) === 'stable-available',
   )
 
   const prereleaseStableAvailable = prereleaseResults.filter(
@@ -686,7 +648,12 @@ async function main() {
 
   if (hasInconsistency) logConsistencyFailure(consistencyChecks)
 
-  console.log(chalk.green.bold('✅ All version checks passed') + '\n')
+  if (!SILENT_PASS) {
+    console.log(chalk.green.bold('✅ All version checks passed') + '\n')
+  }
 }
 
-main().catch(console.error)
+main().catch((error) => {
+  console.error(error)
+  process.exit(1)
+})
