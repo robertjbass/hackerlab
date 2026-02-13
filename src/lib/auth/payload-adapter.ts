@@ -121,7 +121,10 @@ export function PayloadAdapter(payload: Payload): Adapter {
 
     async linkAccount(account: AdapterAccount) {
       const idField = getProviderIdField(account.provider)
-      if (!idField) return
+      if (!idField) {
+        console.warn(`[PayloadAdapter] linkAccount: unknown provider "${account.provider}", skipping`)
+        return
+      }
       const numericId = parseInt(account.userId, 10)
       if (!Number.isInteger(numericId)) return
       try {
@@ -203,7 +206,6 @@ export function PayloadAdapter(payload: Payload): Adapter {
         if (docs.length === 0) return null
         const user = docs[0]
         const expires = new Date(user.emailLoginTokenExpires as string)
-        if (isNaN(expires.getTime()) || expires <= new Date()) return null
         await payload.update({
           collection: 'user',
           id: user.id,

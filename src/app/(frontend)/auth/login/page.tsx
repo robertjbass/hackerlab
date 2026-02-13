@@ -11,6 +11,8 @@ import {
 } from '@/components/ui/card'
 import { signInWithProvider } from '@/app/(payload)/admin/login/actions'
 
+const POST_LOGIN_REDIRECT = '/'
+
 export default function LoginPage() {
   return (
     <div className="flex min-h-[60vh] items-center justify-center">
@@ -22,7 +24,7 @@ export default function LoginPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
-          <form action={signInWithProvider.bind(null, 'google', '/')}>
+          <form action={signInWithProvider.bind(null, 'google', POST_LOGIN_REDIRECT)}>
             <Button
               type="submit"
               variant="outline"
@@ -33,7 +35,7 @@ export default function LoginPage() {
               Continue with Google
             </Button>
           </form>
-          <form action={signInWithProvider.bind(null, 'github', '/')}>
+          <form action={signInWithProvider.bind(null, 'github', POST_LOGIN_REDIRECT)}>
             <Button
               type="submit"
               variant="outline"

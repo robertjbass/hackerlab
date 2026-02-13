@@ -18,7 +18,14 @@ const checks: Check[] = [
   { name: 'Type check', command: 'pnpm exec tsc --noEmit --pretty' },
 ]
 
-const results: { name: string; passed: boolean; duration: number }[] = []
+type CheckResult = {
+  name: string
+  passed: boolean
+  duration: number
+  error?: string
+}
+
+const results: CheckResult[] = []
 
 for (const check of checks) {
   const start = Date.now()
@@ -29,10 +36,10 @@ for (const check of checks) {
     const duration = Date.now() - start
     results.push({ name: check.name, passed: true, duration })
     console.log(`✓ ${check.name} passed (${(duration / 1000).toFixed(1)}s)`)
-  } catch {
-    // TODO: capture error details and include in results/output for CI diagnostics
+  } catch (error: unknown) {
     const duration = Date.now() - start
-    results.push({ name: check.name, passed: false, duration })
+    const message = error instanceof Error ? error.message : String(error)
+    results.push({ name: check.name, passed: false, duration, error: message })
     console.error(`✗ ${check.name} failed (${(duration / 1000).toFixed(1)}s)`)
   }
 }

@@ -3,7 +3,7 @@ import { forwardRef, type SVGProps } from 'react'
 type IconProps = SVGProps<SVGSVGElement>
 
 export const GithubIcon = forwardRef<SVGSVGElement, IconProps>(
-  ({ ...props }, ref) => (
+  (props, ref) => (
     <svg
       ref={ref}
       xmlns="http://www.w3.org/2000/svg"

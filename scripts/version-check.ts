@@ -144,7 +144,7 @@ function parseVersion(version: string): ParsedVersion | null {
 function compareVersions(
   installed: string,
   latest: string,
-): 'upgrade-available' | 'stable-available' | 'up-to-date' | 'newer' {
+): 'upgrade-available' | 'stable-available' | 'up-to-date' | 'newer' | 'parse-error' {
   const inst = parseVersion(installed)
   const lat = parseVersion(latest)
 
@@ -152,7 +152,7 @@ function compareVersions(
     console.warn(
       `[version-check] Could not parse versions — installed: "${installed}", latest: "${latest}"`,
     )
-    return 'up-to-date'
+    return 'parse-error'
   }
 
   const onPrerelease = inst.prerelease !== null
@@ -184,7 +184,7 @@ function formatComparison(name: string, info: VersionInfo): string {
   const status =
     info.installed && info.latest
       ? compareVersions(info.installed, info.latest)
-      : 'up-to-date'
+      : 'parse-error'
 
   const lines: string[] = []
 
@@ -204,6 +204,9 @@ function formatComparison(name: string, info: VersionInfo): string {
       break
     case 'up-to-date':
       line2 += ' ' + chalk.green('✅')
+      break
+    case 'parse-error':
+      line2 += ' ' + chalk.yellow('⚠️  could not parse version')
       break
   }
 
@@ -326,9 +329,10 @@ function logConsistencyFailure(consistencyChecks: ConsistencyCheck[]): never {
 
 function getPrereleaseStatusText(pkg: PrereleaseCheckResult): string {
   if (pkg.stableAvailable) return chalk.red.bold('🚨 STABLE AVAILABLE')
-  if (pkg.latest && compareVersions(pkg.installed, pkg.latest) === 'newer') {
-    return chalk.magenta('🔮 (ahead of stable)')
-  }
+  if (!pkg.latest) return chalk.yellow('⚠️  could not fetch latest')
+  const status = compareVersions(pkg.installed, pkg.latest)
+  if (status === 'newer') return chalk.magenta('🔮 (ahead of stable)')
+  if (status === 'parse-error') return chalk.yellow('⚠️  could not parse version')
   return chalk.green('✅')
 }
 

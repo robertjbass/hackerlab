@@ -124,20 +124,31 @@ export const authConfig: NextAuthConfig = {
           user.id = String(newUser.id)
         }
 
-        // First user to sign up becomes admin — check for existing admins
-        // rather than total count to narrow the race window
+        // First user to sign up becomes admin — atomic claim via serializable transaction
         const userId = parseInt(user.id, 10)
-        const { docs: admins } = await payload.find({
-          collection: 'user',
-          where: { role: { equals: UserRole.Admin } },
-          limit: 1,
+        const txID = await payload.db.beginTransaction({
+          isolationLevel: 'serializable',
         })
-        if (admins.length === 0) {
-          await payload.update({
+        try {
+          const req = { payload, transactionID: txID! }
+          const { docs: admins } = await payload.find({
             collection: 'user',
-            id: userId,
-            data: { role: UserRole.Admin },
+            where: { role: { equals: UserRole.Admin } },
+            limit: 1,
+            req,
           })
+          if (admins.length === 0) {
+            await payload.update({
+              collection: 'user',
+              id: userId,
+              data: { role: UserRole.Admin },
+              req,
+            })
+          }
+          await payload.db.commitTransaction(txID!)
+        } catch {
+          // Serialization failure means another signup won the race — that's fine
+          if (txID) await payload.db.rollbackTransaction(txID)
         }
 
         return true

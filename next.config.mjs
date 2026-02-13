@@ -14,7 +14,7 @@ const nextConfig = {
     turbopackFileSystemCacheForDev: true,
   },
   images: {
-    unoptimized: true,
+    unoptimized: process.env.NODE_ENV !== 'production',
     remotePatterns: [
       { hostname: 'lh3.googleusercontent.com' },
       { hostname: 'avatars.githubusercontent.com' },

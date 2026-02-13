@@ -44,7 +44,7 @@ if (!process.env.BLOB_PREFIX) {
 
 export default buildConfig({
   admin: {
-    user: 'user',
+    user: User.slug,
     importMap: {
       baseDir: path.resolve(dirname),
     },
