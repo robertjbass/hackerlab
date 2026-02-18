@@ -13,12 +13,44 @@ This file provides guidance to AI agents such as Claude Code (claude.ai/code) wh
 - Import collections directly by path — no barrel files (`@/collections/User`, not `@/collections`)
 - Custom admin components inside of the Payload admin (`src/components/admin/*`) can not use tailwind css, use inline styles with Payload CSS custom properties instead. Importing tailwind into the admin panel will break the entire admin panel.
 
+## Project Structure (Payload)
+
+```text
+src/
+├── app/
+│   ├── (frontend)/          # Frontend routes
+│   └── (payload)/           # Payload admin routes
+├── collections/             # Collection configs
+├── components/              # Custom React components
+├── lib/                     # Shared utilities (auth, data, helpers)
+├── migrations/              # Payload migrations
+├── payload-types.ts         # Auto-generated types
+└── payload.config.ts        # Main config
+```
+
+## Payload CMS Rules (from Payload AGENTS.md)
+
+- **TypeScript-first**: always use Payload types and generated types (`src/payload-types.ts`)
+- **Schema changes**: run `pnpm codegen` (generates import map + types). If you must run steps manually: `pnpm payload generate:importMap` + `pnpm payload generate:types`
+- **Type validation**: run `pnpm check:types` (or `pnpm check`) after significant changes
+- **Local API access control**: when passing `user` to Local API, always set `overrideAccess: false` or access control is bypassed
+- **Transactions in hooks**: always pass `req` to nested `req.payload.*` operations to keep them in the same transaction
+- **Prevent hook loops**: use context flags when a hook writes back to the same collection
+- **Access control hygiene**: field-level access returns boolean only; ensure role fields exist before using role checks in access rules
+- **Admin components**: after adding or editing admin components, regenerate the import map (`pnpm payload generate:importMap` or `pnpm codegen`)
+- **Auth Local API**: auth adapter/strategy operations intentionally run with admin access (no `overrideAccess: false`). If you add stricter access rules later, do not assume these calls are protected—explicitly opt in to access checks where needed.
+
 ## Collections
 - All collection slugs are singular (e.g., `user`, `media`)
 - Collections use typed slugs: `CollectionConfig<'user'>`
 - Each collection directory has: `index.ts` (config), `constants.ts` (enums/options), `hooks.ts` (access helpers)
 - Access helpers (`anyone`, `admins`) live in `collections/shared/access.ts` and are shared across collections
 - Admin groups: User → "Admin", Media → "Assets"
+
+### Database Conventions
+
+- Table names are singular (`user`, `blog`, etc.)
+- Many-to-many junction tables are named `singular_singular` (e.g., `user_role`), and each row represents one record from each table
 
 ## Authentication
 
@@ -43,12 +75,35 @@ Key rules:
 - Junction tables for efficient relationship queries
 - Pagination disabled for small datasets to reduce overhead
 - **Always use `populate` parameter** with `payload.find()` to opt-in to specific fields
-- Use `pnpm analyze:queries` to monitor query sizes and performance
 
 **Database**:
 - PostgreSQL 17.7
 - Custom migrations in `src/migrations/`
 - `DEV_DB_PUSH=true` in `.env` enables push mode (auto-sync schema, no migrations) — independent of `NODE_ENV` so local builds work against push-mode databases
+
+### Storage
+
+- Media uploads are Vercel Blob only (`disableLocalStorage: true` in `src/collections/Media/index.ts`).
+
+### Migrations
+
+- `src/migrations/20260212_192713.ts` drops and recreates the `public` schema as part of the v0.2 → v0.3 transition. Do not run it on a database that must preserve existing data.
+
+## Environment Variables
+
+Required in `.env`:
+
+- `DATABASE_URL` — PostgreSQL connection string
+- `DEV_DB_PUSH` — Set to `true` for local dev to use push mode instead of migrations
+- `PAYLOAD_SECRET` — Secret for Payload encryption
+- `GOOGLE_CLIENT_ID` — Google OAuth client ID
+- `GOOGLE_CLIENT_SECRET` — Google OAuth client secret
+- `GITHUB_CLIENT_ID` — GitHub OAuth client ID
+- `GITHUB_CLIENT_SECRET` — GitHub OAuth client secret
+- `AUTH_SECRET` — Auth.js session encryption secret
+- `AUTH_URL` — Auth.js base URL (e.g., `http://localhost:4000`)
+- `BLOB_READ_WRITE_TOKEN` — Vercel Blob token (required in all environments)
+- `BLOB_PREFIX` — Vercel Blob key prefix (required in all environments)
 
 ### PayloadCMS Query Optimization with `populate`
 

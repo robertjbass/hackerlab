@@ -13,7 +13,7 @@ function isValidOrigin(request: Request): boolean {
   return true
 }
 
-export async function POST(request: Request) {
+async function clearSessionAndRedirect(request: Request) {
   if (!isValidOrigin(request)) {
     return new NextResponse('Forbidden', { status: 403 })
   }
@@ -28,4 +28,15 @@ export async function POST(request: Request) {
   cookieStore.delete('oauth-callback-url')
   const url = new URL('/', request.url)
   return NextResponse.redirect(url)
+}
+
+export async function GET(request: Request) {
+  return clearSessionAndRedirect(request)
+}
+
+export async function POST(request: Request) {
+  if (!isValidOrigin(request)) {
+    return new NextResponse('Forbidden', { status: 403 })
+  }
+  return clearSessionAndRedirect(request)
 }

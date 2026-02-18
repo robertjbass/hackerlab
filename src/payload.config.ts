@@ -43,6 +43,7 @@ if (!process.env.BLOB_PREFIX) {
 }
 
 export default buildConfig({
+  serverURL: process.env.AUTH_URL || 'http://localhost:3000',
   admin: {
     user: User.slug,
     importMap: {

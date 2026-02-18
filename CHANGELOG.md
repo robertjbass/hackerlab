@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.1] - 2026-02-17
+
+### Improvements
+- Default dev/start server port changed to 4000
+- Downgraded Next.js from canary (16.2.0-canary.38) to stable (16.1.6)
+- Aligned all shared dependency versions with layerbase project
+- Upgraded eslint to v10, @eslint/js to v10, sharp to 0.34.5, lucide-react to 0.574.0
+- Loosened pinned versions (react, @types/react, typescript) to use caret ranges
+
+### Bug Fixes
+- Hardened access control, security headers, and media uploads
+
 ## [0.3.0] - 2026-02-12
 
 ### Added

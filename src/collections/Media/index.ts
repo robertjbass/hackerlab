@@ -14,7 +14,16 @@ const Media: CollectionConfig<'media'> = {
       'height',
     ],
   },
-  upload: true,
+  upload: {
+    mimeTypes: [
+      'image/jpeg',
+      'image/png',
+      'image/webp',
+      'image/svg+xml',
+      'image/gif',
+    ],
+    disableLocalStorage: true,
+  },
   access: {
     read: anyone,
     create: admins,

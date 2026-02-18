@@ -1,6 +1,10 @@
-import { anyone, admins } from '@/collections/shared/access'
+import { admins, selfOrAdmins, adminsOnly } from '@/collections/shared/access'
 import { AuthjsStrategy } from '@/lib/auth/payload-strategy'
-import { UserRole, userRoleOptions, authProviderOptions } from '@/collections/User/constants'
+import {
+  UserRole,
+  userRoleOptions,
+  authProviderOptions,
+} from '@/collections/User/constants'
 import { type CollectionConfig } from 'payload'
 
 const User: CollectionConfig<'user'> = {
@@ -19,9 +23,9 @@ const User: CollectionConfig<'user'> = {
     group: 'Admin',
   },
   access: {
-    read: anyone,
+    read: selfOrAdmins,
     create: admins,
-    update: admins,
+    update: selfOrAdmins,
     delete: admins,
     admin: admins,
   },
@@ -69,6 +73,9 @@ const User: CollectionConfig<'user'> = {
       label: 'Original Auth Provider',
       type: 'select',
       options: authProviderOptions,
+      access: {
+        read: adminsOnly,
+      },
       admin: {
         readOnly: true,
         position: 'sidebar',
@@ -80,6 +87,9 @@ const User: CollectionConfig<'user'> = {
       label: 'Most Recent Auth Method',
       type: 'select',
       options: authProviderOptions,
+      access: {
+        read: adminsOnly,
+      },
       admin: {
         readOnly: true,
         position: 'sidebar',
@@ -91,6 +101,9 @@ const User: CollectionConfig<'user'> = {
       label: 'Avatar',
       type: 'upload',
       relationTo: 'media',
+      access: {
+        read: () => true,
+      },
       admin: {
         description: 'User-uploaded avatar image',
       },
@@ -99,6 +112,9 @@ const User: CollectionConfig<'user'> = {
       name: 'googleImageUrl',
       label: 'Google Image URL',
       type: 'text',
+      access: {
+        read: () => true,
+      },
       admin: {
         readOnly: true,
         position: 'sidebar',
@@ -108,6 +124,9 @@ const User: CollectionConfig<'user'> = {
       name: 'githubImageUrl',
       label: 'GitHub Image URL',
       type: 'text',
+      access: {
+        read: () => true,
+      },
       admin: {
         readOnly: true,
         position: 'sidebar',
@@ -119,6 +138,9 @@ const User: CollectionConfig<'user'> = {
       type: 'text',
       unique: true,
       index: true,
+      access: {
+        read: adminsOnly,
+      },
       admin: {
         readOnly: true,
         position: 'sidebar',
@@ -131,6 +153,9 @@ const User: CollectionConfig<'user'> = {
       type: 'text',
       unique: true,
       index: true,
+      access: {
+        read: adminsOnly,
+      },
       admin: {
         readOnly: true,
         position: 'sidebar',
@@ -143,7 +168,7 @@ const User: CollectionConfig<'user'> = {
       type: 'text',
       index: true,
       access: {
-        read: admins,
+        read: () => false,
         update: admins,
       },
       admin: {
@@ -156,7 +181,7 @@ const User: CollectionConfig<'user'> = {
       label: 'Email Login Token Expires',
       type: 'date',
       access: {
-        read: admins,
+        read: () => false,
         update: admins,
       },
       admin: {
