@@ -1,4 +1,5 @@
 import type { NextAuthConfig } from 'next-auth'
+import type { Provider } from 'next-auth/providers'
 import Google from 'next-auth/providers/google'
 import GitHub from 'next-auth/providers/github'
 import { getPayload } from 'payload'
@@ -11,25 +12,40 @@ import {
   getProviderImageUrl,
 } from '@/lib/auth/provider-helpers'
 
-export const authConfig: NextAuthConfig = {
-  providers: [
-    Google({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      authorization: {
-        params: {
-          scope: 'openid email profile',
-          prompt: 'select_account',
+function buildProviders(): Provider[] {
+  const providers: Provider[] = []
+
+  if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+    providers.push(
+      Google({
+        clientId: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        authorization: {
+          params: {
+            scope: 'openid email profile',
+            prompt: 'select_account',
+          },
         },
-      },
-      allowDangerousEmailAccountLinking: true,
-    }),
-    GitHub({
-      clientId: process.env.GITHUB_CLIENT_ID,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET,
-      allowDangerousEmailAccountLinking: true,
-    }),
-  ],
+        allowDangerousEmailAccountLinking: true,
+      }),
+    )
+  }
+
+  if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
+    providers.push(
+      GitHub({
+        clientId: process.env.GITHUB_CLIENT_ID,
+        clientSecret: process.env.GITHUB_CLIENT_SECRET,
+        allowDangerousEmailAccountLinking: true,
+      }),
+    )
+  }
+
+  return providers
+}
+
+export const authConfig: NextAuthConfig = {
+  providers: buildProviders(),
   pages: {
     signIn: '/admin/login',
     error: '/admin/login',

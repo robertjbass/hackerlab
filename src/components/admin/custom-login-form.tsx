@@ -1,10 +1,22 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useState, type CSSProperties } from 'react'
+import { useState, useEffect, type CSSProperties } from 'react'
 import { Google } from '@/components/icons/google'
 import { GithubIcon } from '@/components/icons/github'
-import { signInWithProvider } from '@/app/(payload)/admin/login/actions'
+import {
+  signInWithProvider,
+  getAvailableProviders,
+} from '@/app/(payload)/admin/login/actions'
+import type { EnabledProvider } from '@/lib/auth/providers'
+
+const PROVIDER_ICONS: Record<
+  string,
+  React.ComponentType<{ style?: CSSProperties }>
+> = {
+  google: Google,
+  github: GithubIcon,
+}
 
 const styles = {
   container: {
@@ -133,8 +145,17 @@ export function CustomLoginForm() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [providers, setProviders] = useState<EnabledProvider[]>([])
 
   const errorParam = searchParams.get('error')
+
+  useEffect(() => {
+    async function load() {
+      const result = await getAvailableProviders()
+      setProviders(result)
+    }
+    load()
+  }, [])
 
   async function handleEmailLogin(e: React.FormEvent) {
     e.preventDefault()
@@ -175,6 +196,7 @@ export function CustomLoginForm() {
   }
 
   const displayError = error || (errorParam ? 'Authentication failed. Please try again.' : '')
+  const hasOAuth = providers.length > 0
 
   return (
     <div style={styles.container}>
@@ -186,33 +208,35 @@ export function CustomLoginForm() {
 
         {displayError && <div style={styles.error}>{displayError}</div>}
 
-        <div style={styles.oauthGroup}>
-          <form action={signInWithProvider.bind(null, 'google', callbackUrl)}>
-            <button
-              type="submit"
-              style={{ ...styles.button, ...styles.outlineButton }}
-            >
-              <Google style={{ width: 20, height: 20 }} />
-              Continue with Google
-            </button>
-          </form>
+        {hasOAuth && (
+          <div style={styles.oauthGroup}>
+            {providers.map((provider) => {
+              const Icon = PROVIDER_ICONS[provider.id]
+              return (
+                <form
+                  key={provider.id}
+                  action={signInWithProvider.bind(null, provider.id, callbackUrl)}
+                >
+                  <button
+                    type="submit"
+                    style={{ ...styles.button, ...styles.outlineButton }}
+                  >
+                    {Icon && <Icon style={{ width: 20, height: 20 }} />}
+                    Continue with {provider.label}
+                  </button>
+                </form>
+              )
+            })}
+          </div>
+        )}
 
-          <form action={signInWithProvider.bind(null, 'github', callbackUrl)}>
-            <button
-              type="submit"
-              style={{ ...styles.button, ...styles.outlineButton }}
-            >
-              <GithubIcon style={{ width: 20, height: 20 }} />
-              Continue with GitHub
-            </button>
-          </form>
-        </div>
-
-        <div style={styles.divider}>
-          <div style={styles.dividerLine} />
-          <span style={styles.dividerText}>or sign in with email</span>
-          <div style={styles.dividerLine} />
-        </div>
+        {hasOAuth && (
+          <div style={styles.divider}>
+            <div style={styles.dividerLine} />
+            <span style={styles.dividerText}>or sign in with email</span>
+            <div style={styles.dividerLine} />
+          </div>
+        )}
 
         <form onSubmit={handleEmailLogin}>
           <div style={styles.formGroup}>

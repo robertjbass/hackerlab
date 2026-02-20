@@ -64,3 +64,6 @@ mcp_config.json
 
 # Claude Code global config (symlinked for convenience)
 .claude.json
+
+# Theme import backup
+src/app/globals.css.backup

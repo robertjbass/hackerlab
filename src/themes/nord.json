@@ -1,0 +1,90 @@
+{
+  "name": "Nord",
+  "type": "dark",
+  "colors": {
+    "editor.background": "#2e3440",
+    "editor.foreground": "#d8dee9",
+    "editor.lineHighlightBackground": "#3b4252",
+    "editor.selectionBackground": "#434c5e",
+    "editorCursor.foreground": "#d8dee9",
+
+    "sideBar.background": "#2e3440",
+    "sideBar.foreground": "#d8dee9",
+    "sideBar.border": "#3b4252",
+    "sideBarTitle.foreground": "#d8dee9",
+    "sideBarSectionHeader.background": "#2e3440",
+    "sideBarSectionHeader.foreground": "#88c0d0",
+
+    "activityBar.background": "#2e3440",
+    "activityBar.foreground": "#d8dee9",
+    "activityBar.inactiveForeground": "#4c566a",
+    "activityBar.border": "#3b4252",
+
+    "titleBar.activeBackground": "#2e3440",
+    "titleBar.activeForeground": "#d8dee9",
+    "titleBar.border": "#3b4252",
+
+    "list.activeSelectionBackground": "#4c566a",
+    "list.activeSelectionForeground": "#d8dee9",
+    "list.inactiveSelectionBackground": "#3b4252",
+    "list.inactiveSelectionForeground": "#d8dee9",
+    "list.hoverBackground": "#3b4252",
+    "list.hoverForeground": "#d8dee9",
+
+    "input.background": "#3b4252",
+    "input.foreground": "#d8dee9",
+    "input.border": "#4c566a",
+    "input.placeholderForeground": "#616e88",
+
+    "button.background": "#5e81ac",
+    "button.foreground": "#eceff4",
+    "button.hoverBackground": "#81a1c1",
+    "button.secondaryBackground": "#4c566a",
+    "button.secondaryForeground": "#d8dee9",
+    "button.secondaryHoverBackground": "#5e6779",
+
+    "dropdown.background": "#3b4252",
+    "dropdown.foreground": "#d8dee9",
+    "dropdown.border": "#4c566a",
+
+    "scrollbarSlider.background": "rgba(67, 76, 94, 0.6)",
+    "scrollbarSlider.hoverBackground": "rgba(76, 86, 106, 0.8)",
+    "scrollbarSlider.activeBackground": "rgba(94, 129, 172, 0.6)",
+
+    "badge.background": "#88c0d0",
+    "badge.foreground": "#2e3440",
+
+    "panel.background": "#2e3440",
+    "panel.border": "#3b4252",
+
+    "terminal.foreground": "#d8dee9",
+    "terminal.ansiBlack": "#3b4252",
+    "terminal.ansiRed": "#bf616a",
+    "terminal.ansiGreen": "#a3be8c",
+    "terminal.ansiYellow": "#ebcb8b",
+    "terminal.ansiBlue": "#81a1c1",
+    "terminal.ansiMagenta": "#b48ead",
+    "terminal.ansiCyan": "#88c0d0",
+    "terminal.ansiWhite": "#e5e9f0",
+
+    "editorWidget.background": "#2e3440",
+    "editorWidget.foreground": "#d8dee9",
+    "editorWidget.border": "#4c566a",
+
+    "notifications.background": "#2e3440",
+    "notifications.foreground": "#d8dee9",
+    "notifications.border": "#3b4252",
+
+    "focusBorder": "#88c0d0",
+
+    "gitDecoration.addedResourceForeground": "#a3be8c",
+    "gitDecoration.modifiedResourceForeground": "#ebcb8b",
+    "gitDecoration.deletedResourceForeground": "#bf616a",
+
+    "errorForeground": "#bf616a",
+    "editorError.foreground": "#bf616a",
+    "editorWarning.foreground": "#ebcb8b",
+    "editorInfo.foreground": "#88c0d0"
+  },
+  "tokenColors": []
+}

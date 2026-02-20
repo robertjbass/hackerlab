@@ -1,0 +1,90 @@
+{
+  "name": "GitHub Dark",
+  "type": "dark",
+  "colors": {
+    "editor.background": "#0d1117",
+    "editor.foreground": "#c9d1d9",
+    "editor.lineHighlightBackground": "#161b22",
+    "editor.selectionBackground": "#264f78",
+    "editorCursor.foreground": "#58a6ff",
+
+    "sideBar.background": "#010409",
+    "sideBar.foreground": "#c9d1d9",
+    "sideBar.border": "#21262d",
+    "sideBarTitle.foreground": "#c9d1d9",
+    "sideBarSectionHeader.background": "#010409",
+    "sideBarSectionHeader.foreground": "#8b949e",
+
+    "activityBar.background": "#0d1117",
+    "activityBar.foreground": "#c9d1d9",
+    "activityBar.inactiveForeground": "#484f58",
+    "activityBar.border": "#21262d",
+
+    "titleBar.activeBackground": "#0d1117",
+    "titleBar.activeForeground": "#c9d1d9",
+    "titleBar.border": "#21262d",
+
+    "list.activeSelectionBackground": "#1f6feb",
+    "list.activeSelectionForeground": "#ffffff",
+    "list.inactiveSelectionBackground": "#21262d",
+    "list.inactiveSelectionForeground": "#c9d1d9",
+    "list.hoverBackground": "#161b22",
+    "list.hoverForeground": "#c9d1d9",
+
+    "input.background": "#0d1117",
+    "input.foreground": "#c9d1d9",
+    "input.border": "#30363d",
+    "input.placeholderForeground": "#484f58",
+
+    "button.background": "#238636",
+    "button.foreground": "#ffffff",
+    "button.hoverBackground": "#2ea043",
+    "button.secondaryBackground": "#21262d",
+    "button.secondaryForeground": "#c9d1d9",
+    "button.secondaryHoverBackground": "#30363d",
+
+    "dropdown.background": "#0d1117",
+    "dropdown.foreground": "#c9d1d9",
+    "dropdown.border": "#30363d",
+
+    "scrollbarSlider.background": "rgba(110, 118, 129, 0.4)",
+    "scrollbarSlider.hoverBackground": "rgba(110, 118, 129, 0.6)",
+    "scrollbarSlider.activeBackground": "rgba(110, 118, 129, 0.5)",
+
+    "badge.background": "#1f6feb",
+    "badge.foreground": "#ffffff",
+
+    "panel.background": "#0d1117",
+    "panel.border": "#21262d",
+
+    "terminal.foreground": "#c9d1d9",
+    "terminal.ansiBlack": "#0d1117",
+    "terminal.ansiRed": "#ff7b72",
+    "terminal.ansiGreen": "#3fb950",
+    "terminal.ansiYellow": "#d29922",
+    "terminal.ansiBlue": "#58a6ff",
+    "terminal.ansiMagenta": "#bc8cff",
+    "terminal.ansiCyan": "#39c5cf",
+    "terminal.ansiWhite": "#c9d1d9",
+
+    "editorWidget.background": "#0d1117",
+    "editorWidget.foreground": "#c9d1d9",
+    "editorWidget.border": "#30363d",
+
+    "notifications.background": "#161b22",
+    "notifications.foreground": "#c9d1d9",
+    "notifications.border": "#30363d",
+
+    "focusBorder": "#1f6feb",
+
+    "gitDecoration.addedResourceForeground": "#3fb950",
+    "gitDecoration.modifiedResourceForeground": "#d29922",
+    "gitDecoration.deletedResourceForeground": "#f85149",
+
+    "errorForeground": "#f85149",
+    "editorError.foreground": "#f85149",
+    "editorWarning.foreground": "#d29922",
+    "editorInfo.foreground": "#58a6ff"
+  },
+  "tokenColors": []
+}
