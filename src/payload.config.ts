@@ -54,6 +54,10 @@ export default buildConfig({
         login: {
           Component: '@/components/admin/custom-login-form.tsx#CustomLoginForm',
         },
+        theme: {
+          Component: '@/components/admin/theme-preview.tsx#ThemePreview',
+          path: '/theme',
+        },
       },
     },
   },

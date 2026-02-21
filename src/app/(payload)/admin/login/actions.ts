@@ -1,12 +1,16 @@
 'use server'
 
 import { signIn, signOut, auth } from '@/lib/auth'
+import { getEnabledProviders, type EnabledProvider } from '@/lib/auth/providers'
 
-const ALLOWED_PROVIDERS = ['google', 'github'] as const
+export async function getAvailableProviders(): Promise<EnabledProvider[]> {
+  return getEnabledProviders()
+}
 
 export async function signInWithProvider(provider: string, callbackUrl: string) {
-  if (!ALLOWED_PROVIDERS.includes(provider as (typeof ALLOWED_PROVIDERS)[number])) {
-    throw new Error(`Invalid auth provider: "${provider}"`)
+  const enabled = getEnabledProviders()
+  if (!enabled.some((p) => p.id === provider)) {
+    throw new Error(`Auth provider "${provider}" is not configured`)
   }
   const session = await auth()
   if (session) {
