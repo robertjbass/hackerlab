@@ -13,6 +13,7 @@ export async function getUserRoles(
     where: { user: { equals: user.id } },
     depth: 1,
     limit: 20,
+    overrideAccess: true,
   })
 
   const roles = docs

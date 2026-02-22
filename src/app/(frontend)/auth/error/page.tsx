@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { Button } from '@/components/ui/button'
 
 type ErrorPageProps = {
   searchParams: Promise<{ error?: string }>
@@ -26,12 +27,9 @@ export default async function AuthErrorPage({ searchParams }: ErrorPageProps) {
           Authentication Error
         </h1>
         <p className="mt-2 text-muted-foreground">{message}</p>
-        <Link
-          href="/auth/login"
-          className="mt-4 inline-block text-primary hover:underline"
-        >
-          Try again
-        </Link>
+        <Button asChild variant="link" className="mt-4">
+          <Link href="/auth/login">Try again</Link>
+        </Button>
       </div>
     </div>
   )

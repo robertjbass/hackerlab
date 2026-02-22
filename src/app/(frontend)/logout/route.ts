@@ -9,15 +9,11 @@ function isValidOrigin(request: Request): boolean {
 
   if (origin) return origin === expectedOrigin
   if (referer) return new URL(referer).origin === expectedOrigin
-  // No Origin or Referer — treat as same-origin (privacy-preserving browsers)
-  return true
+  // Both absent — reject to prevent CSRF
+  return false
 }
 
 async function clearSessionAndRedirect(request: Request) {
-  if (!isValidOrigin(request)) {
-    return new NextResponse('Forbidden', { status: 403 })
-  }
-
   const cookieStore = await cookies()
   cookieStore.delete('authjs.session-token')
   cookieStore.delete('__Secure-authjs.session-token')
@@ -28,10 +24,6 @@ async function clearSessionAndRedirect(request: Request) {
   cookieStore.delete('oauth-callback-url')
   const url = new URL('/', request.url)
   return NextResponse.redirect(url)
-}
-
-export async function GET(request: Request) {
-  return clearSessionAndRedirect(request)
 }
 
 export async function POST(request: Request) {

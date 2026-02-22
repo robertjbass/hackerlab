@@ -35,21 +35,19 @@ function hashToken(token: string): string {
 }
 
 async function assignDefaultRole(payload: Payload, userId: number) {
-  try {
-    const { docs } = await payload.find({
-      collection: 'role',
-      where: { name: { equals: RoleName.User } },
-      limit: 1,
+  const { docs } = await payload.find({
+    collection: 'role',
+    where: { name: { equals: RoleName.User } },
+    limit: 1,
+    overrideAccess: true,
+  })
+  if (docs.length > 0) {
+    await payload.create({
+      collection: 'user_role',
+      draft: false,
+      overrideAccess: true,
+      data: { user: userId, role: docs[0].id },
     })
-    if (docs.length > 0) {
-      await payload.create({
-        collection: 'user_role',
-        draft: false,
-        data: { user: userId, role: docs[0].id },
-      })
-    }
-  } catch (error) {
-    console.error('[PayloadAdapter] Error assigning default role:', error)
   }
 }
 
@@ -65,7 +63,11 @@ export function PayloadAdapter(payload: Payload): Adapter {
           password: generateRandomPassword(),
         },
       })
-      await assignDefaultRole(payload, user.id)
+      try {
+        await assignDefaultRole(payload, user.id)
+      } catch (error) {
+        console.error('[PayloadAdapter] Failed to assign default role:', error)
+      }
       return toAdapterUser(user)
     },
 
@@ -198,7 +200,11 @@ export function PayloadAdapter(payload: Payload): Adapter {
               authProvider: AuthProvider.Email,
             },
           })
-          await assignDefaultRole(payload, newUser.id)
+          try {
+            await assignDefaultRole(payload, newUser.id)
+          } catch (roleError) {
+            console.error('[PayloadAdapter] Failed to assign default role:', roleError)
+          }
         } else {
           await payload.update({
             collection: 'user',

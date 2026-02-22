@@ -5,6 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.3] - 2026-02-22
+
+### Security
+- Middleware now validates JWT session via Auth.js instead of checking cookie existence
+- Logout route: removed GET handler to prevent CSRF logout attacks
+- Logout route: reject requests when both Origin and Referer headers are absent
+- Server-side callbackUrl validation in login server action
+- Added `overrideAccess: true` to `getUserRoles` to prevent recursive access checks
+- `assignDefaultRole` errors now propagate instead of being silently swallowed
+
+### Fixed
+- `getPostBySlug`, `getPostsByCategory`, `getPostsByTag` now use `select`/`populate` to avoid over-fetching
+- `getPostsByCategory` paginates through all junction rows instead of capping at 100
+- Login page shows loading spinner while providers fetch, with error state on failure
+- Stale `active.json` updated from Rosé Pine Moon to Indigo Slate
+- PWA manifest `display` changed to `browser` until icons are added
+
+### Improved
+- Mobile responsiveness: 44px touch targets on header, footer, pagination, and auth pages
+- Mobile responsiveness: safe-area insets for notched phones (header, footer, body)
+- Mobile responsiveness: global overflow-x protection and word-wrap
+- Mobile responsiveness: admin login form inputs use 16px font to prevent iOS zoom
+- Blog prose content styled with `@tailwindcss/typography` and overflow-safe images/code blocks
+
+### Dependencies
+- Updated Payload CMS packages from 3.76.1 to 3.77.0
+- Added `@tailwindcss/typography` for blog content styling
+
 ## [0.3.2] - 2026-02-21
 
 ### Added
