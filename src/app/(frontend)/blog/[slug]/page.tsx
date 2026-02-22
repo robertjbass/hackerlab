@@ -87,7 +87,7 @@ export default async function PostPage({ params }: PostPageProps) {
         <p className="mb-8 text-lg text-muted-foreground">{post.excerpt}</p>
       )}
 
-      <div className="prose prose-slate max-w-none dark:prose-invert">
+      <div className="prose prose-slate max-w-none dark:prose-invert prose-img:max-w-full prose-img:h-auto prose-pre:overflow-x-auto">
         <RichText data={post.content as SerializedEditorState} />
       </div>
     </article>

@@ -19,7 +19,7 @@ export function Header({ user }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-sm">
+    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/80 pt-[env(safe-area-inset-top)] backdrop-blur-sm">
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
         <div className="flex items-center gap-x-12">
           <Link href="/" className="flex items-center gap-2">
@@ -70,7 +70,7 @@ export function Header({ user }: HeaderProps) {
         <div className="flex lg:hidden">
           <button
             type="button"
-            className="text-muted-foreground"
+            className="-mr-2 inline-flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground hover:bg-accent"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             <span className="sr-only">Toggle menu</span>
@@ -85,12 +85,12 @@ export function Header({ user }: HeaderProps) {
 
       {mobileMenuOpen && (
         <div className="lg:hidden">
-          <div className="space-y-1 px-6 pb-4">
+          <div className="max-h-[calc(100vh-4rem)] space-y-1 overflow-y-auto px-6 pb-4">
             {mainNavLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="block py-2 text-base font-medium text-muted-foreground"
+                className="block py-3 text-base font-medium text-muted-foreground"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {link.label}

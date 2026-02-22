@@ -7,6 +7,11 @@ export async function getAvailableProviders(): Promise<EnabledProvider[]> {
   return getEnabledProviders()
 }
 
+function sanitizeCallbackUrl(url: string): string {
+  if (!url.startsWith('/') || url.startsWith('//')) return '/admin'
+  return url
+}
+
 export async function signInWithProvider(
   provider: string,
   callbackUrl: string,
@@ -19,5 +24,5 @@ export async function signInWithProvider(
   if (session) {
     await signOut({ redirect: false })
   }
-  await signIn(provider, { redirectTo: callbackUrl })
+  await signIn(provider, { redirectTo: sanitizeCallbackUrl(callbackUrl) })
 }

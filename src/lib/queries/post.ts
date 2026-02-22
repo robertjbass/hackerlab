@@ -8,6 +8,31 @@ async function getPayloadInstance() {
   return getPayload({ config: payloadConfig })
 }
 
+const listSelect = {
+  title: true,
+  slug: true,
+  excerpt: true,
+  featuredImage: true,
+  author: true,
+  publishedAt: true,
+  tags: true,
+} as const
+
+const listPopulate = {
+  media: {
+    url: true,
+    alt: true,
+    sizes: true,
+  },
+  user: {
+    name: true,
+  },
+  tag: {
+    name: true,
+    slug: true,
+  },
+} as const
+
 export const getPublishedPosts = cache(
   async ({ page = 1 }: { page?: number } = {}) => {
     const payload = await getPayloadInstance()
@@ -18,29 +43,8 @@ export const getPublishedPosts = cache(
       limit: POSTS_PER_PAGE,
       page,
       depth: 1,
-      select: {
-        title: true,
-        slug: true,
-        excerpt: true,
-        featuredImage: true,
-        author: true,
-        publishedAt: true,
-        tags: true,
-      },
-      populate: {
-        media: {
-          url: true,
-          alt: true,
-          sizes: true,
-        },
-        user: {
-          name: true,
-        },
-        tag: {
-          name: true,
-          slug: true,
-        },
-      },
+      select: listSelect,
+      populate: listPopulate,
     })
   },
 )
@@ -54,6 +58,24 @@ export const getPostBySlug = cache(async (slug: string) => {
     },
     limit: 1,
     depth: 2,
+    populate: {
+      media: {
+        url: true,
+        alt: true,
+        sizes: true,
+      },
+      user: {
+        name: true,
+      },
+      tag: {
+        name: true,
+        slug: true,
+      },
+      category: {
+        name: true,
+        slug: true,
+      },
+    },
   })
   return docs[0] ?? null
 })
@@ -68,7 +90,6 @@ export const getPostsByCategory = cache(
   }) => {
     const payload = await getPayloadInstance()
 
-    // Find the category first
     const { docs: categories } = await payload.find({
       collection: 'category',
       where: { slug: { equals: categorySlug } },
@@ -78,19 +99,27 @@ export const getPostsByCategory = cache(
 
     const category = categories[0]
 
-    // Find post_category junctions for this category
-    const { docs: junctions } = await payload.find({
-      collection: 'post_category',
-      where: { category: { equals: category.id } },
-      depth: 0,
-      limit: 100,
-    })
+    // Fetch all junction rows — paginate to avoid silent truncation
+    const allPostIds: number[] = []
+    let hasMore = true
+    let junctionPage = 1
+    while (hasMore) {
+      const { docs: junctions, hasNextPage } = await payload.find({
+        collection: 'post_category',
+        where: { category: { equals: category.id } },
+        depth: 0,
+        limit: 100,
+        page: junctionPage,
+        select: { post: true },
+      })
+      for (const j of junctions) {
+        allPostIds.push(typeof j.post === 'number' ? j.post : j.post.id)
+      }
+      hasMore = hasNextPage
+      junctionPage++
+    }
 
-    const postIds = junctions.map((j) =>
-      typeof j.post === 'number' ? j.post : j.post.id,
-    )
-
-    if (postIds.length === 0) {
+    if (allPostIds.length === 0) {
       return {
         category,
         posts: {
@@ -107,12 +136,17 @@ export const getPostsByCategory = cache(
     const posts = await payload.find({
       collection: 'post',
       where: {
-        and: [{ id: { in: postIds } }, { _status: { equals: 'published' } }],
+        and: [
+          { id: { in: allPostIds } },
+          { _status: { equals: 'published' } },
+        ],
       },
       sort: '-publishedAt',
       limit: POSTS_PER_PAGE,
       page,
       depth: 1,
+      select: listSelect,
+      populate: listPopulate,
     })
 
     return { category, posts }
@@ -144,6 +178,8 @@ export const getPostsByTag = cache(
       limit: POSTS_PER_PAGE,
       page,
       depth: 1,
+      select: listSelect,
+      populate: listPopulate,
     })
 
     return { tag, posts }

@@ -1,24 +1,22 @@
+import NextAuth from 'next-auth'
 import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
 
-export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl
+// Edge-compatible auth for middleware — only validates JWT sessions.
+// Full auth config with Payload adapter lives in src/lib/auth/.
+// Providers are not needed for JWT validation; AUTH_SECRET is read from env.
+const { auth } = NextAuth({
+  providers: [],
+  session: { strategy: 'jwt' },
+})
 
-  // Check for Auth.js session cookie
-  const hasSession =
-    request.cookies.has('authjs.session-token') ||
-    request.cookies.has('__Secure-authjs.session-token')
-
-  if (!hasSession) {
-    const loginUrl = new URL('/auth/login', request.url)
-    loginUrl.searchParams.set('callbackUrl', pathname)
+export default auth((req) => {
+  if (!req.auth) {
+    const loginUrl = new URL('/auth/login', req.url)
+    loginUrl.searchParams.set('callbackUrl', req.nextUrl.pathname)
     return NextResponse.redirect(loginUrl)
   }
+})
 
-  return NextResponse.next()
-}
-
-// Only run middleware on protected routes
 export const config = {
   matcher: ['/dashboard/:path*'],
 }

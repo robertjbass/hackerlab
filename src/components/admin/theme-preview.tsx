@@ -22,7 +22,7 @@ type ActiveConfig = {
 
 const s = {
   container: {
-    padding: '2rem',
+    padding: '1rem',
     maxWidth: '900px',
     margin: '0 auto',
   } satisfies CSSProperties,
@@ -48,7 +48,7 @@ const s = {
   } satisfies CSSProperties,
   grid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(min(220px, 100%), 1fr))',
     gap: '1rem',
     marginBottom: '2rem',
   } satisfies CSSProperties,

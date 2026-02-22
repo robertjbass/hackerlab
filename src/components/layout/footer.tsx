@@ -18,12 +18,12 @@ export function Footer() {
             <p className="mt-4 text-sm text-muted-foreground">
               {siteConfig.description}
             </p>
-            <div className="mt-4 flex gap-4">
+            <div className="-ml-2 mt-4 flex gap-0">
               <Link
                 href={siteConfig.social.github.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-muted-foreground transition-colors hover:text-foreground"
+                className="inline-flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
               >
                 <Github className="h-5 w-5" />
               </Link>
@@ -31,7 +31,7 @@ export function Footer() {
                 href={siteConfig.social.x.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-muted-foreground transition-colors hover:text-foreground"
+                className="inline-flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
               >
                 <X className="h-5 w-5" />
               </Link>
@@ -43,7 +43,7 @@ export function Footer() {
               <h3 className="text-sm font-semibold text-foreground">
                 {group.title}
               </h3>
-              <ul className="mt-4 space-y-2">
+              <ul className="mt-4 space-y-0">
                 {group.links.map((link) => (
                   <li key={link.href}>
                     <Link
@@ -51,7 +51,7 @@ export function Footer() {
                       {...(link.external
                         ? { target: '_blank', rel: 'noopener noreferrer' }
                         : {})}
-                      className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                      className="inline-block py-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
                     >
                       {link.label}
                     </Link>
@@ -62,7 +62,7 @@ export function Footer() {
           ))}
         </div>
 
-        <div className="mt-12 border-t border-border pt-8">
+        <div className="mt-12 border-t border-border pb-[env(safe-area-inset-bottom)] pt-8">
           <p className="text-center text-sm text-muted-foreground">
             &copy; {new Date().getFullYear()} {siteConfig.copyright}. All rights
             reserved.

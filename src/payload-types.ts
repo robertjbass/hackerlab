@@ -59,255 +59,249 @@ export type SupportedTimezones =
   | 'Pacific/Guam'
   | 'Pacific/Noumea'
   | 'Pacific/Auckland'
-  | 'Pacific/Fiji'
+  | 'Pacific/Fiji';
 
 export interface Config {
   auth: {
-    user: UserAuthOperations
-  }
-  blocks: {}
+    user: UserAuthOperations;
+  };
+  blocks: {};
   collections: {
-    user: User
-    media: Media
-    role: Role
-    user_role: UserRole
-    post: Post
-    category: Category
-    tag: Tag
-    post_category: PostCategory
-    'payload-kv': PayloadKv
-    'payload-locked-documents': PayloadLockedDocument
-    'payload-preferences': PayloadPreference
-    'payload-migrations': PayloadMigration
-  }
+    user: User;
+    media: Media;
+    role: Role;
+    user_role: UserRole;
+    post: Post;
+    category: Category;
+    tag: Tag;
+    post_category: PostCategory;
+    'payload-kv': PayloadKv;
+    'payload-locked-documents': PayloadLockedDocument;
+    'payload-preferences': PayloadPreference;
+    'payload-migrations': PayloadMigration;
+  };
   collectionsJoins: {
     user: {
-      roles: 'user_role'
-    }
+      roles: 'user_role';
+    };
     role: {
-      users: 'user_role'
-    }
+      users: 'user_role';
+    };
     post: {
-      categories: 'post_category'
-    }
+      categories: 'post_category';
+    };
     category: {
-      posts: 'post_category'
-    }
-  }
+      posts: 'post_category';
+    };
+  };
   collectionsSelect: {
-    user: UserSelect<false> | UserSelect<true>
-    media: MediaSelect<false> | MediaSelect<true>
-    role: RoleSelect<false> | RoleSelect<true>
-    user_role: UserRoleSelect<false> | UserRoleSelect<true>
-    post: PostSelect<false> | PostSelect<true>
-    category: CategorySelect<false> | CategorySelect<true>
-    tag: TagSelect<false> | TagSelect<true>
-    post_category: PostCategorySelect<false> | PostCategorySelect<true>
-    'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>
-    'payload-locked-documents':
-      | PayloadLockedDocumentsSelect<false>
-      | PayloadLockedDocumentsSelect<true>
-    'payload-preferences':
-      | PayloadPreferencesSelect<false>
-      | PayloadPreferencesSelect<true>
-    'payload-migrations':
-      | PayloadMigrationsSelect<false>
-      | PayloadMigrationsSelect<true>
-  }
+    user: UserSelect<false> | UserSelect<true>;
+    media: MediaSelect<false> | MediaSelect<true>;
+    role: RoleSelect<false> | RoleSelect<true>;
+    user_role: UserRoleSelect<false> | UserRoleSelect<true>;
+    post: PostSelect<false> | PostSelect<true>;
+    category: CategorySelect<false> | CategorySelect<true>;
+    tag: TagSelect<false> | TagSelect<true>;
+    post_category: PostCategorySelect<false> | PostCategorySelect<true>;
+    'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
+    'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
+    'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
+    'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
+  };
   db: {
-    defaultIDType: number
-  }
-  fallbackLocale: null
-  globals: {}
-  globalsSelect: {}
-  locale: null
-  user: User
+    defaultIDType: number;
+  };
+  fallbackLocale: null;
+  globals: {};
+  globalsSelect: {};
+  locale: null;
+  user: User;
   jobs: {
-    tasks: unknown
-    workflows: unknown
-  }
+    tasks: unknown;
+    workflows: unknown;
+  };
 }
 export interface UserAuthOperations {
   forgotPassword: {
-    email: string
-    password: string
-  }
+    email: string;
+    password: string;
+  };
   login: {
-    email: string
-    password: string
-  }
+    email: string;
+    password: string;
+  };
   registerFirstUser: {
-    email: string
-    password: string
-  }
+    email: string;
+    password: string;
+  };
   unlock: {
-    email: string
-    password: string
-  }
+    email: string;
+    password: string;
+  };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "user".
  */
 export interface User {
-  id: number
-  name?: string | null
-  bio?: string | null
+  id: number;
+  name?: string | null;
+  bio?: string | null;
   roles?: {
-    docs?: (number | UserRole)[]
-    hasNextPage?: boolean
-    totalDocs?: number
-  }
+    docs?: (number | UserRole)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
   /**
    * Original signup method
    */
-  authProvider?: ('google' | 'github' | 'email') | null
+  authProvider?: ('google' | 'github' | 'email') | null;
   /**
    * Most recent login method
    */
-  lastAuthMethod?: ('google' | 'github' | 'email') | null
+  lastAuthMethod?: ('google' | 'github' | 'email') | null;
   /**
    * User-uploaded avatar image
    */
-  avatar?: (number | null) | Media
-  googleImageUrl?: string | null
-  githubImageUrl?: string | null
+  avatar?: (number | null) | Media;
+  googleImageUrl?: string | null;
+  githubImageUrl?: string | null;
   /**
    * Google OAuth subject ID for account linking
    */
-  googleId?: string | null
+  googleId?: string | null;
   /**
    * GitHub OAuth user ID for account linking
    */
-  githubId?: string | null
-  emailLoginToken?: string | null
-  emailLoginTokenExpires?: string | null
-  updatedAt: string
-  createdAt: string
-  email: string
-  resetPasswordToken?: string | null
-  resetPasswordExpiration?: string | null
-  salt?: string | null
-  hash?: string | null
-  loginAttempts?: number | null
-  lockUntil?: string | null
-  password?: string | null
-  collection: 'user'
+  githubId?: string | null;
+  emailLoginToken?: string | null;
+  emailLoginTokenExpires?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  password?: string | null;
+  collection: 'user';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "user_role".
  */
 export interface UserRole {
-  id: number
-  user: number | User
-  role: number | Role
-  updatedAt: string
-  createdAt: string
+  id: number;
+  user: number | User;
+  role: number | Role;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "role".
  */
 export interface Role {
-  id: number
-  name: string
+  id: number;
+  name: string;
   users?: {
-    docs?: (number | UserRole)[]
-    hasNextPage?: boolean
-    totalDocs?: number
-  }
-  updatedAt: string
-  createdAt: string
+    docs?: (number | UserRole)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
  */
 export interface Media {
-  id: number
-  alt: string
-  prefix?: string | null
-  updatedAt: string
-  createdAt: string
-  url?: string | null
-  thumbnailURL?: string | null
-  filename?: string | null
-  mimeType?: string | null
-  filesize?: number | null
-  width?: number | null
-  height?: number | null
-  focalX?: number | null
-  focalY?: number | null
+  id: number;
+  alt: string;
+  prefix?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
   sizes?: {
     thumbnail?: {
-      url?: string | null
-      width?: number | null
-      height?: number | null
-      mimeType?: string | null
-      filesize?: number | null
-      filename?: string | null
-    }
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
     medium?: {
-      url?: string | null
-      width?: number | null
-      height?: number | null
-      mimeType?: string | null
-      filesize?: number | null
-      filename?: string | null
-    }
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
     large?: {
-      url?: string | null
-      width?: number | null
-      height?: number | null
-      mimeType?: string | null
-      filesize?: number | null
-      filename?: string | null
-    }
-  }
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "post".
  */
 export interface Post {
-  id: number
-  title: string
+  id: number;
+  title: string;
   /**
    * Auto-generated from "title". Edit to override.
    */
-  slug: string
+  slug: string;
   /**
    * Short summary shown in listings (max 300 chars)
    */
-  excerpt?: string | null
-  featuredImage?: (number | null) | Media
+  excerpt?: string | null;
+  featuredImage?: (number | null) | Media;
   content: {
     root: {
-      type: string
+      type: string;
       children: {
-        type: any
-        version: number
-        [k: string]: unknown
-      }[]
-      direction: ('ltr' | 'rtl') | null
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | ''
-      indent: number
-      version: number
-    }
-    [k: string]: unknown
-  }
-  tags?: (number | Tag)[] | null
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  tags?: (number | Tag)[] | null;
   categories?: {
-    docs?: (number | PostCategory)[]
-    hasNextPage?: boolean
-    totalDocs?: number
-  }
-  author?: (number | null) | User
+    docs?: (number | PostCategory)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  author?: (number | null) | User;
   /**
    * Auto-set when first published
    */
-  publishedAt?: string | null
+  publishedAt?: string | null;
   /**
    * Search engine optimization fields
    */
@@ -315,367 +309,368 @@ export interface Post {
     /**
      * Overrides the page title in search results (50-60 chars ideal)
      */
-    metaTitle?: string | null
+    metaTitle?: string | null;
     /**
      * Shown in search result snippets (150-160 chars ideal)
      */
-    metaDescription?: string | null
+    metaDescription?: string | null;
     /**
      * Image shown when shared on social media (1200x630 ideal)
      */
-    ogImage?: (number | null) | Media
-  }
-  updatedAt: string
-  createdAt: string
-  _status?: ('draft' | 'published') | null
+    ogImage?: (number | null) | Media;
+  };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "tag".
  */
 export interface Tag {
-  id: number
-  name: string
+  id: number;
+  name: string;
   /**
    * Auto-generated from "name". Edit to override.
    */
-  slug: string
-  updatedAt: string
-  createdAt: string
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "post_category".
  */
 export interface PostCategory {
-  id: number
-  post: number | Post
-  category: number | Category
-  updatedAt: string
-  createdAt: string
+  id: number;
+  post: number | Post;
+  category: number | Category;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "category".
  */
 export interface Category {
-  id: number
-  name: string
+  id: number;
+  name: string;
   /**
    * Auto-generated from "name". Edit to override.
    */
-  slug: string
-  description?: string | null
+  slug: string;
+  description?: string | null;
   posts?: {
-    docs?: (number | PostCategory)[]
-    hasNextPage?: boolean
-    totalDocs?: number
-  }
-  updatedAt: string
-  createdAt: string
+    docs?: (number | PostCategory)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
-  id: number
-  key: string
+  id: number;
+  key: string;
   data:
     | {
-        [k: string]: unknown
+        [k: string]: unknown;
       }
     | unknown[]
     | string
     | number
     | boolean
-    | null
+    | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
-  id: number
+  id: number;
   document?:
     | ({
-        relationTo: 'user'
-        value: number | User
+        relationTo: 'user';
+        value: number | User;
       } | null)
     | ({
-        relationTo: 'media'
-        value: number | Media
+        relationTo: 'media';
+        value: number | Media;
       } | null)
     | ({
-        relationTo: 'role'
-        value: number | Role
+        relationTo: 'role';
+        value: number | Role;
       } | null)
     | ({
-        relationTo: 'user_role'
-        value: number | UserRole
+        relationTo: 'user_role';
+        value: number | UserRole;
       } | null)
     | ({
-        relationTo: 'post'
-        value: number | Post
+        relationTo: 'post';
+        value: number | Post;
       } | null)
     | ({
-        relationTo: 'category'
-        value: number | Category
+        relationTo: 'category';
+        value: number | Category;
       } | null)
     | ({
-        relationTo: 'tag'
-        value: number | Tag
+        relationTo: 'tag';
+        value: number | Tag;
       } | null)
     | ({
-        relationTo: 'post_category'
-        value: number | PostCategory
-      } | null)
-  globalSlug?: string | null
+        relationTo: 'post_category';
+        value: number | PostCategory;
+      } | null);
+  globalSlug?: string | null;
   user: {
-    relationTo: 'user'
-    value: number | User
-  }
-  updatedAt: string
-  createdAt: string
+    relationTo: 'user';
+    value: number | User;
+  };
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-preferences".
  */
 export interface PayloadPreference {
-  id: number
+  id: number;
   user: {
-    relationTo: 'user'
-    value: number | User
-  }
-  key?: string | null
+    relationTo: 'user';
+    value: number | User;
+  };
+  key?: string | null;
   value?:
     | {
-        [k: string]: unknown
+        [k: string]: unknown;
       }
     | unknown[]
     | string
     | number
     | boolean
-    | null
-  updatedAt: string
-  createdAt: string
+    | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-migrations".
  */
 export interface PayloadMigration {
-  id: number
-  name?: string | null
-  batch?: number | null
-  updatedAt: string
-  createdAt: string
+  id: number;
+  name?: string | null;
+  batch?: number | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "user_select".
  */
 export interface UserSelect<T extends boolean = true> {
-  name?: T
-  bio?: T
-  roles?: T
-  authProvider?: T
-  lastAuthMethod?: T
-  avatar?: T
-  googleImageUrl?: T
-  githubImageUrl?: T
-  googleId?: T
-  githubId?: T
-  emailLoginToken?: T
-  emailLoginTokenExpires?: T
-  updatedAt?: T
-  createdAt?: T
-  email?: T
-  resetPasswordToken?: T
-  resetPasswordExpiration?: T
-  salt?: T
-  hash?: T
-  loginAttempts?: T
-  lockUntil?: T
+  name?: T;
+  bio?: T;
+  roles?: T;
+  authProvider?: T;
+  lastAuthMethod?: T;
+  avatar?: T;
+  googleImageUrl?: T;
+  githubImageUrl?: T;
+  googleId?: T;
+  githubId?: T;
+  emailLoginToken?: T;
+  emailLoginTokenExpires?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  email?: T;
+  resetPasswordToken?: T;
+  resetPasswordExpiration?: T;
+  salt?: T;
+  hash?: T;
+  loginAttempts?: T;
+  lockUntil?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media_select".
  */
 export interface MediaSelect<T extends boolean = true> {
-  alt?: T
-  prefix?: T
-  updatedAt?: T
-  createdAt?: T
-  url?: T
-  thumbnailURL?: T
-  filename?: T
-  mimeType?: T
-  filesize?: T
-  width?: T
-  height?: T
-  focalX?: T
-  focalY?: T
+  alt?: T;
+  prefix?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
   sizes?:
     | T
     | {
         thumbnail?:
           | T
           | {
-              url?: T
-              width?: T
-              height?: T
-              mimeType?: T
-              filesize?: T
-              filename?: T
-            }
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
         medium?:
           | T
           | {
-              url?: T
-              width?: T
-              height?: T
-              mimeType?: T
-              filesize?: T
-              filename?: T
-            }
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
         large?:
           | T
           | {
-              url?: T
-              width?: T
-              height?: T
-              mimeType?: T
-              filesize?: T
-              filename?: T
-            }
-      }
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "role_select".
  */
 export interface RoleSelect<T extends boolean = true> {
-  name?: T
-  users?: T
-  updatedAt?: T
-  createdAt?: T
+  name?: T;
+  users?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "user_role_select".
  */
 export interface UserRoleSelect<T extends boolean = true> {
-  user?: T
-  role?: T
-  updatedAt?: T
-  createdAt?: T
+  user?: T;
+  role?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "post_select".
  */
 export interface PostSelect<T extends boolean = true> {
-  title?: T
-  slug?: T
-  excerpt?: T
-  featuredImage?: T
-  content?: T
-  tags?: T
-  categories?: T
-  author?: T
-  publishedAt?: T
+  title?: T;
+  slug?: T;
+  excerpt?: T;
+  featuredImage?: T;
+  content?: T;
+  tags?: T;
+  categories?: T;
+  author?: T;
+  publishedAt?: T;
   seo?:
     | T
     | {
-        metaTitle?: T
-        metaDescription?: T
-        ogImage?: T
-      }
-  updatedAt?: T
-  createdAt?: T
-  _status?: T
+        metaTitle?: T;
+        metaDescription?: T;
+        ogImage?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "category_select".
  */
 export interface CategorySelect<T extends boolean = true> {
-  name?: T
-  slug?: T
-  description?: T
-  posts?: T
-  updatedAt?: T
-  createdAt?: T
+  name?: T;
+  slug?: T;
+  description?: T;
+  posts?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "tag_select".
  */
 export interface TagSelect<T extends boolean = true> {
-  name?: T
-  slug?: T
-  updatedAt?: T
-  createdAt?: T
+  name?: T;
+  slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "post_category_select".
  */
 export interface PostCategorySelect<T extends boolean = true> {
-  post?: T
-  category?: T
-  updatedAt?: T
-  createdAt?: T
+  post?: T;
+  category?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
-  key?: T
-  data?: T
+  key?: T;
+  data?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents_select".
  */
 export interface PayloadLockedDocumentsSelect<T extends boolean = true> {
-  document?: T
-  globalSlug?: T
-  user?: T
-  updatedAt?: T
-  createdAt?: T
+  document?: T;
+  globalSlug?: T;
+  user?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-preferences_select".
  */
 export interface PayloadPreferencesSelect<T extends boolean = true> {
-  user?: T
-  key?: T
-  value?: T
-  updatedAt?: T
-  createdAt?: T
+  user?: T;
+  key?: T;
+  value?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-migrations_select".
  */
 export interface PayloadMigrationsSelect<T extends boolean = true> {
-  name?: T
-  batch?: T
-  updatedAt?: T
-  createdAt?: T
+  name?: T;
+  batch?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "auth".
  */
 export interface Auth {
-  [k: string]: unknown
+  [k: string]: unknown;
 }
+
 
 declare module 'payload' {
   export interface GeneratedTypes extends Config {}
