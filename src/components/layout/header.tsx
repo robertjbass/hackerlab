@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { LogOut, Menu, Terminal, X } from '@/components/icons'
 import { Button } from '@/components/ui/button'
+import { siteConfig } from '@/lib/site-config'
+import { mainNavLinks } from '@/lib/navigation'
 
 type HeaderProps = {
   user?: {
@@ -22,27 +24,20 @@ export function Header({ user }: HeaderProps) {
         <div className="flex items-center gap-x-12">
           <Link href="/" className="flex items-center gap-2">
             <Terminal className="h-8 w-8 text-primary" />
-            <span className="text-xl font-bold text-foreground">Hackerlab</span>
+            <span className="text-xl font-bold text-foreground">
+              {siteConfig.name}
+            </span>
           </Link>
           <div className="hidden lg:flex lg:gap-x-8">
-            <Link
-              href="/products"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-            >
-              Products
-            </Link>
-            <Link
-              href="/pricing"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-            >
-              Pricing
-            </Link>
-            <Link
-              href="/docs"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-            >
-              Docs
-            </Link>
+            {mainNavLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              >
+                {link.label}
+              </Link>
+            ))}
           </div>
         </div>
         <div className="hidden lg:flex lg:items-center lg:gap-x-4">
@@ -91,27 +86,16 @@ export function Header({ user }: HeaderProps) {
       {mobileMenuOpen && (
         <div className="lg:hidden">
           <div className="space-y-1 px-6 pb-4">
-            <Link
-              href="/products"
-              className="block py-2 text-base font-medium text-muted-foreground"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Products
-            </Link>
-            <Link
-              href="/pricing"
-              className="block py-2 text-base font-medium text-muted-foreground"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Pricing
-            </Link>
-            <Link
-              href="/docs"
-              className="block py-2 text-base font-medium text-muted-foreground"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Docs
-            </Link>
+            {mainNavLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="block py-2 text-base font-medium text-muted-foreground"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {link.label}
+              </Link>
+            ))}
             <div className="flex items-center gap-4 pt-4">
               {user ? (
                 <>

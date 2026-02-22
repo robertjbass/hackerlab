@@ -2,7 +2,7 @@ import type { Adapter, AdapterUser, AdapterAccount } from '@auth/core/adapters'
 import type { Payload } from 'payload'
 import type { User } from '@/payload-types'
 import { randomBytes, createHmac } from 'crypto'
-import { UserRole, AuthProvider } from '@/collections/User/constants'
+import { RoleName, AuthProvider } from '@/collections/User/constants'
 import { getProviderIdField } from '@/lib/auth/provider-helpers'
 import { resolveUserImage } from '@/lib/resolve-user-image'
 
@@ -23,13 +23,34 @@ function generateRandomPassword(): string {
 function getAuthSecret(): string {
   const secret = process.env.AUTH_SECRET
   if (!secret) {
-    throw new Error('AUTH_SECRET environment variable is required for token hashing')
+    throw new Error(
+      'AUTH_SECRET environment variable is required for token hashing',
+    )
   }
   return secret
 }
 
 function hashToken(token: string): string {
   return createHmac('sha256', getAuthSecret()).update(token).digest('hex')
+}
+
+async function assignDefaultRole(payload: Payload, userId: number) {
+  try {
+    const { docs } = await payload.find({
+      collection: 'role',
+      where: { name: { equals: RoleName.User } },
+      limit: 1,
+    })
+    if (docs.length > 0) {
+      await payload.create({
+        collection: 'user_role',
+        draft: false,
+        data: { user: userId, role: docs[0].id },
+      })
+    }
+  } catch (error) {
+    console.error('[PayloadAdapter] Error assigning default role:', error)
+  }
 }
 
 export function PayloadAdapter(payload: Payload): Adapter {
@@ -41,10 +62,10 @@ export function PayloadAdapter(payload: Payload): Adapter {
         data: {
           email: data.email.toLowerCase(),
           name: data.name ?? undefined,
-          role: UserRole.User,
           password: generateRandomPassword(),
         },
       })
+      await assignDefaultRole(payload, user.id)
       return toAdapterUser(user)
     },
 
@@ -52,7 +73,10 @@ export function PayloadAdapter(payload: Payload): Adapter {
       const numericId = parseInt(id, 10)
       if (!Number.isInteger(numericId)) return null
       try {
-        const user = await payload.findByID({ collection: 'user', id: numericId })
+        const user = await payload.findByID({
+          collection: 'user',
+          id: numericId,
+        })
         if (!user) return null
         return toAdapterUser(user)
       } catch (error) {
@@ -96,14 +120,14 @@ export function PayloadAdapter(payload: Payload): Adapter {
     async updateUser(data) {
       const numericId = parseInt(data.id, 10)
       if (!Number.isInteger(numericId)) {
-        throw new Error(`PayloadAdapter.updateUser: invalid user ID "${data.id}"`)
+        throw new Error(
+          `PayloadAdapter.updateUser: invalid user ID "${data.id}"`,
+        )
       }
       try {
         const updateData: Record<string, unknown> = {}
         if (data.name) updateData.name = data.name
         if (data.email) updateData.email = data.email.toLowerCase()
-        // Auth.js adapter doesn't carry provider context — skip image updates here.
-        // Provider-specific images are set in the signIn callback instead.
 
         const user = await payload.update({
           collection: 'user',
@@ -122,7 +146,9 @@ export function PayloadAdapter(payload: Payload): Adapter {
     async linkAccount(account: AdapterAccount) {
       const idField = getProviderIdField(account.provider)
       if (!idField) {
-        console.warn(`[PayloadAdapter] linkAccount: unknown provider "${account.provider}", skipping`)
+        console.warn(
+          `[PayloadAdapter] linkAccount: unknown provider "${account.provider}", skipping`,
+        )
         return
       }
       const numericId = parseInt(account.userId, 10)
@@ -161,7 +187,7 @@ export function PayloadAdapter(payload: Payload): Adapter {
           limit: 1,
         })
         if (docs.length === 0) {
-          await payload.create({
+          const newUser = await payload.create({
             collection: 'user',
             draft: false,
             data: {
@@ -169,10 +195,10 @@ export function PayloadAdapter(payload: Payload): Adapter {
               emailLoginToken: hashedToken,
               emailLoginTokenExpires: data.expires.toISOString(),
               password: generateRandomPassword(),
-              role: UserRole.User,
               authProvider: AuthProvider.Email,
             },
           })
+          await assignDefaultRole(payload, newUser.id)
         } else {
           await payload.update({
             collection: 'user',
@@ -183,9 +209,16 @@ export function PayloadAdapter(payload: Payload): Adapter {
             },
           })
         }
-        return { identifier: data.identifier, token: data.token, expires: data.expires }
+        return {
+          identifier: data.identifier,
+          token: data.token,
+          expires: data.expires,
+        }
       } catch (error) {
-        console.error('[PayloadAdapter] Error creating verification token:', error)
+        console.error(
+          '[PayloadAdapter] Error creating verification token:',
+          error,
+        )
         throw error
       }
     },

@@ -1,18 +1,21 @@
 import { type Option } from 'payload'
 
-export enum UserRole {
+export enum RoleName {
   Admin = 'admin',
+  Editor = 'editor',
   User = 'user',
 }
 
-const userRoleLabels = {
-  [UserRole.Admin]: 'Admin',
-  [UserRole.User]: 'User',
+const roleNameLabels = {
+  [RoleName.Admin]: 'Admin',
+  [RoleName.Editor]: 'Editor',
+  [RoleName.User]: 'User',
 } as const
 
-export const userRoleOptions = [
-  { label: userRoleLabels[UserRole.Admin], value: UserRole.Admin },
-  { label: userRoleLabels[UserRole.User], value: UserRole.User },
+export const roleNameOptions = [
+  { label: roleNameLabels[RoleName.Admin], value: RoleName.Admin },
+  { label: roleNameLabels[RoleName.Editor], value: RoleName.Editor },
+  { label: roleNameLabels[RoleName.User], value: RoleName.User },
 ] as const satisfies Option[]
 
 export enum AuthProvider {
@@ -28,7 +31,13 @@ const authProviderLabels = {
 } as const
 
 export const authProviderOptions = [
-  { label: authProviderLabels[AuthProvider.Google], value: AuthProvider.Google },
-  { label: authProviderLabels[AuthProvider.GitHub], value: AuthProvider.GitHub },
+  {
+    label: authProviderLabels[AuthProvider.Google],
+    value: AuthProvider.Google,
+  },
+  {
+    label: authProviderLabels[AuthProvider.GitHub],
+    value: AuthProvider.GitHub,
+  },
   { label: authProviderLabels[AuthProvider.Email], value: AuthProvider.Email },
 ] as const satisfies Option[]

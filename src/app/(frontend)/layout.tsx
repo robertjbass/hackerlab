@@ -5,6 +5,7 @@ import { ThemeProvider } from '@/components/theme-provider'
 import { AuthHeader } from '@/components/layout/auth-header'
 import { Footer } from '@/components/layout/footer'
 import { Toaster } from '@/components/ui/sonner'
+import { siteConfig } from '@/lib/site-config'
 import '../globals.css'
 
 const inter = Inter({
@@ -18,9 +19,8 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Hackerlab - Developer Tools for Modern Workflows',
-  description:
-    'Premium software tools built by developers, for developers. Streamline your development process.',
+  title: `${siteConfig.name} - ${siteConfig.tagline}`,
+  description: siteConfig.description,
 }
 
 type FrontendLayoutProps = {

@@ -5,7 +5,7 @@ import GitHub from 'next-auth/providers/github'
 import { getPayload } from 'payload'
 import payloadConfig from '@payload-config'
 import { randomBytes } from 'crypto'
-import { UserRole, AuthProvider } from '@/collections/User/constants'
+import { RoleName, AuthProvider } from '@/collections/User/constants'
 import {
   getProviderIdField,
   getImageFieldForProvider,
@@ -44,6 +44,42 @@ function buildProviders(): Provider[] {
   return providers
 }
 
+async function findRoleByName(
+  payload: Awaited<ReturnType<typeof getPayload>>,
+  name: string,
+) {
+  const { docs } = await payload.find({
+    collection: 'role',
+    where: { name: { equals: name } },
+    limit: 1,
+  })
+  return docs[0] ?? null
+}
+
+async function assignRole(
+  payload: Awaited<ReturnType<typeof getPayload>>,
+  userId: number,
+  roleId: number,
+  req?: { payload: typeof payload; transactionID: string | number },
+) {
+  // Check for existing assignment to prevent duplicates
+  const { totalDocs } = await payload.count({
+    collection: 'user_role',
+    where: {
+      and: [{ user: { equals: userId } }, { role: { equals: roleId } }],
+    },
+    ...(req ? { req } : {}),
+  })
+  if (totalDocs > 0) return
+
+  await payload.create({
+    collection: 'user_role',
+    draft: false,
+    data: { user: userId, role: roleId },
+    ...(req ? { req } : {}),
+  })
+}
+
 export const authConfig: NextAuthConfig = {
   providers: buildProviders(),
   pages: {
@@ -64,7 +100,9 @@ export const authConfig: NextAuthConfig = {
           const provider = (token.provider as string) ?? ''
           token.name =
             (profile.name as string | undefined) ||
-            ((profile as Record<string, unknown>).login as string | undefined) ||
+            ((profile as Record<string, unknown>).login as
+              | string
+              | undefined) ||
             token.name
           token.picture =
             getProviderImageUrl(provider, profile as Record<string, unknown>) ??
@@ -129,7 +167,6 @@ export const authConfig: NextAuthConfig = {
             data: {
               email: normalizedEmail,
               name: profileName ?? user.name ?? undefined,
-              role: UserRole.User,
               authProvider: account.provider as AuthProvider,
               lastAuthMethod: account.provider as AuthProvider,
               [idField]: account.providerAccountId,
@@ -138,33 +175,43 @@ export const authConfig: NextAuthConfig = {
             },
           })
           user.id = String(newUser.id)
+
+          // Assign default "user" role to new accounts
+          const userRole = await findRoleByName(payload, RoleName.User)
+          if (userRole) {
+            await assignRole(payload, newUser.id, userRole.id as number)
+          }
         }
 
-        // First user to sign up becomes admin — atomic claim via serializable transaction
+        // First user to sign up becomes admin — cheap count check before expensive TX
         const userId = parseInt(user.id, 10)
-        const txID = await payload.db.beginTransaction({
-          isolationLevel: 'serializable',
-        })
-        try {
-          const req = { payload, transactionID: txID! }
-          const { docs: admins } = await payload.find({
-            collection: 'user',
-            where: { role: { equals: UserRole.Admin } },
-            limit: 1,
-            req,
+        const adminRole = await findRoleByName(payload, RoleName.Admin)
+        if (adminRole) {
+          const { totalDocs } = await payload.count({
+            collection: 'user_role',
+            where: { role: { equals: adminRole.id } },
           })
-          if (admins.length === 0) {
-            await payload.update({
-              collection: 'user',
-              id: userId,
-              data: { role: UserRole.Admin },
-              req,
+          if (totalDocs === 0) {
+            const txID = await payload.db.beginTransaction({
+              isolationLevel: 'serializable',
             })
+            try {
+              const req = { payload, transactionID: txID! }
+              const { docs: existingAdmins } = await payload.find({
+                collection: 'user_role',
+                where: { role: { equals: adminRole.id } },
+                limit: 1,
+                req,
+              })
+              if (existingAdmins.length === 0) {
+                await assignRole(payload, userId, adminRole.id as number, req)
+              }
+              await payload.db.commitTransaction(txID!)
+            } catch {
+              // Serialization failure means another signup won the race — that's fine
+              if (txID) await payload.db.rollbackTransaction(txID)
+            }
           }
-          await payload.db.commitTransaction(txID!)
-        } catch {
-          // Serialization failure means another signup won the race — that's fine
-          if (txID) await payload.db.rollbackTransaction(txID)
         }
 
         return true

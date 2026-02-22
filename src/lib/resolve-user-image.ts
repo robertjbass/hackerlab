@@ -1,7 +1,10 @@
 import type { Media, User } from '@/payload-types'
 import { AuthProvider } from '@/collections/User/constants'
 
-type UserWithImage = Pick<User, 'avatar' | 'googleImageUrl' | 'githubImageUrl' | 'lastAuthMethod'>
+type UserWithImage = Pick<
+  User,
+  'avatar' | 'googleImageUrl' | 'githubImageUrl' | 'lastAuthMethod'
+>
 
 const PROVIDER_IMAGE_FIELDS = {
   [AuthProvider.Google]: 'googleImageUrl',
@@ -20,7 +23,8 @@ export function resolveUserImage(user: UserWithImage): string | null {
   if (avatarUrl) return avatarUrl
   const lastMethod = user.lastAuthMethod as AuthProvider | null | undefined
   if (lastMethod && lastMethod in PROVIDER_IMAGE_FIELDS) {
-    const field = PROVIDER_IMAGE_FIELDS[lastMethod as keyof typeof PROVIDER_IMAGE_FIELDS]
+    const field =
+      PROVIDER_IMAGE_FIELDS[lastMethod as keyof typeof PROVIDER_IMAGE_FIELDS]
     const url = user[field]
     if (url) return url
   }

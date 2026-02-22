@@ -18,7 +18,10 @@ import type { EnabledProvider } from '@/lib/auth/providers'
 
 const POST_LOGIN_REDIRECT = '/'
 
-const PROVIDER_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+const PROVIDER_ICONS: Record<
+  string,
+  React.ComponentType<{ className?: string }>
+> = {
   google: Google,
   github: Github,
 }
@@ -38,7 +41,7 @@ export default function LoginPage() {
     <div className="flex min-h-[60vh] items-center justify-center">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-3xl">Sign in to Hackerlab</CardTitle>
+          <CardTitle className="text-3xl">Sign in</CardTitle>
           <CardDescription>
             Access your developer tools and settings
           </CardDescription>
@@ -49,7 +52,11 @@ export default function LoginPage() {
             return (
               <form
                 key={provider.id}
-                action={signInWithProvider.bind(null, provider.id, POST_LOGIN_REDIRECT)}
+                action={signInWithProvider.bind(
+                  null,
+                  provider.id,
+                  POST_LOGIN_REDIRECT,
+                )}
               >
                 <Button
                   type="submit"

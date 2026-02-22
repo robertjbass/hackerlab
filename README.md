@@ -214,22 +214,47 @@ Theme JSON files follow the VS Code theme format:
 }
 ```
 
+## Documentation
+
+| Guide | Description |
+|---|---|
+| [Google OAuth Setup](docs/setup-google-oauth.md) | Step-by-step Google Cloud Console configuration |
+| [GitHub OAuth Setup](docs/setup-github-oauth.md) | Step-by-step GitHub OAuth App configuration |
+| [Deployment](docs/deployment.md) | Vercel, DNS providers, Blob storage, environment variables |
+| [Architecture Decisions](docs/architecture-decisions.md) | Junction tables vs Payload `_rels`, when to use each |
+| [Payload Query Syntax](docs/payload-query.md) | Query patterns for `payload.find()`, populate, depth |
+
 ## Project Structure
 
 ```
 src/
 ├── app/
-│   ├── (frontend)/          # Frontend routes
+│   ├── (frontend)/          # Frontend routes (blog, auth, landing)
 │   ├── (payload)/           # Payload admin routes
 │   └── api/                 # Standalone API routes
 ├── collections/             # Payload collection configs
+│   ├── User/                # User collection + auth constants
+│   ├── Role/                # Role collection (admin, editor, user)
+│   ├── UserRole/            # User-Role junction table
+│   ├── Post/                # Blog posts (versioned, drafts)
+│   ├── Category/            # Blog categories
+│   ├── Tag/                 # Blog tags
+│   ├── PostCategory/        # Post-Category junction table
+│   ├── Media/               # Media uploads (Vercel Blob)
+│   └── shared/              # Shared access helpers and field utilities
 ├── components/
 │   ├── admin/               # Custom admin panel components
+│   ├── blog/                # Blog UI components
 │   ├── icons/               # Icon components
+│   ├── landing/             # Landing page sections
 │   └── ui/                  # shadcn/ui components
 ├── lib/
 │   ├── auth/                # Auth.js + Payload auth bridge
-│   └── theme/               # Theme import system
+│   ├── queries/             # Cached server-side data fetching
+│   ├── theme/               # Theme import system
+│   ├── site-config.ts       # Centralized site identity
+│   ├── navigation.ts        # Shared nav link definitions
+│   └── metadata.ts          # SEO metadata generation
 ├── themes/                  # Bundled VS Code theme JSONs
 ├── migrations/              # Database migrations
 └── payload.config.ts        # Main Payload config
