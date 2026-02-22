@@ -15,7 +15,7 @@ export function CTA() {
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Button asChild size="lg" variant="secondary">
-              <Link href="/auth/register">
+              <Link href="/auth/login">
                 Get Started Free
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
@@ -26,7 +26,7 @@ export function CTA() {
               variant="outline"
               className="border-primary-foreground/30 bg-transparent text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
             >
-              <Link href="/products">View Products</Link>
+              <Link href="/blog">Read the Blog</Link>
             </Button>
           </div>
         </div>

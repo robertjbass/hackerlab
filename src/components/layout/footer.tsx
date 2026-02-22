@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { Github, Terminal, X } from '@/components/icons'
-import { socialLinks } from '@/lib/links'
+import { siteConfig } from '@/lib/site-config'
+import { footerNavGroups } from '@/lib/navigation'
 
 export function Footer() {
   return (
@@ -11,15 +12,15 @@ export function Footer() {
             <Link href="/" className="flex items-center gap-2">
               <Terminal className="h-6 w-6 text-primary" />
               <span className="text-lg font-bold text-foreground">
-                Hackerlab
+                {siteConfig.name}
               </span>
             </Link>
             <p className="mt-4 text-sm text-muted-foreground">
-              Premium developer tools to supercharge your workflow.
+              {siteConfig.description}
             </p>
             <div className="mt-4 flex gap-4">
               <Link
-                href={socialLinks.github.url}
+                href={siteConfig.social.github.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-muted-foreground transition-colors hover:text-foreground"
@@ -27,7 +28,7 @@ export function Footer() {
                 <Github className="h-5 w-5" />
               </Link>
               <Link
-                href={socialLinks.x.url}
+                href={siteConfig.social.x.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-muted-foreground transition-colors hover:text-foreground"
@@ -37,87 +38,34 @@ export function Footer() {
             </div>
           </div>
 
-          <div>
-            <h3 className="text-sm font-semibold text-foreground">Products</h3>
-            <ul className="mt-4 space-y-2">
-              <li>
-                <Link
-                  href="/products"
-                  className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-                >
-                  All Products
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/pricing"
-                  className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-                >
-                  Pricing
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="text-sm font-semibold text-foreground">Resources</h3>
-            <ul className="mt-4 space-y-2">
-              <li>
-                <Link
-                  href="/docs"
-                  className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-                >
-                  Documentation
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="https://github.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-                >
-                  GitHub
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="text-sm font-semibold text-foreground">Account</h3>
-            <ul className="mt-4 space-y-2">
-              <li>
-                <Link
-                  href="/auth/login"
-                  className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-                >
-                  Sign In
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/auth/register"
-                  className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-                >
-                  Register
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/dashboard"
-                  className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-                >
-                  Dashboard
-                </Link>
-              </li>
-            </ul>
-          </div>
+          {footerNavGroups.map((group) => (
+            <div key={group.title}>
+              <h3 className="text-sm font-semibold text-foreground">
+                {group.title}
+              </h3>
+              <ul className="mt-4 space-y-2">
+                {group.links.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      {...(link.external
+                        ? { target: '_blank', rel: 'noopener noreferrer' }
+                        : {})}
+                      className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
 
         <div className="mt-12 border-t border-border pt-8">
           <p className="text-center text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} Layerbase, LLC | dba Hackerlab.
-            All rights reserved.
+            &copy; {new Date().getFullYear()} {siteConfig.copyright}. All rights
+            reserved.
           </p>
         </div>
       </div>

@@ -24,7 +24,9 @@ export function getProviderIdField(provider: string): ProviderIdField | null {
   return providerIdMap[provider] ?? null
 }
 
-export function getImageFieldForProvider(provider: string): ProviderImageField | null {
+export function getImageFieldForProvider(
+  provider: string,
+): ProviderImageField | null {
   return providerImageMap[provider] ?? null
 }
 

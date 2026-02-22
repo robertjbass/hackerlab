@@ -7,7 +7,10 @@ export async function getAvailableProviders(): Promise<EnabledProvider[]> {
   return getEnabledProviders()
 }
 
-export async function signInWithProvider(provider: string, callbackUrl: string) {
+export async function signInWithProvider(
+  provider: string,
+  callbackUrl: string,
+) {
   const enabled = getEnabledProviders()
   if (!enabled.some((p) => p.id === provider)) {
     throw new Error(`Auth provider "${provider}" is not configured`)

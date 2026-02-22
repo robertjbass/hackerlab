@@ -1,4 +1,5 @@
 import {
+  ArrowLeft,
   ArrowRight,
   Boxes,
   Code,
@@ -62,6 +63,7 @@ export { GithubIcon } from '@/components/icons/github'
 
 // Github: outline/stroke icon (for UI elements like links and buttons)
 export {
+  ArrowLeft,
   ArrowRight,
   Boxes,
   Code,

@@ -23,6 +23,11 @@ const Media: CollectionConfig<'media'> = {
       'image/gif',
     ],
     disableLocalStorage: true,
+    imageSizes: [
+      { name: 'thumbnail', width: 300, height: 300, position: 'centre' },
+      { name: 'medium', width: 800, height: 600, position: 'centre' },
+      { name: 'large', width: 1200, height: 900, position: 'centre' },
+    ],
   },
   access: {
     read: anyone,

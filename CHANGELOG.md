@@ -5,6 +5,46 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.2] - 2026-02-21
+
+### Added
+- **Role system redesign:** Role and UserRole junction collections with compound unique indexes
+- **Blog system:** Post, Category, Tag, PostCategory collections with draft/publish workflow
+- **Blog frontend:** Listing, detail (ISR), category/tag filter pages, RSS feed
+- **SEO infrastructure:** sitemap.ts, robots.ts, web manifest, favicon, metadata helper
+- **Error boundaries:** Route-level and global error pages with safe error display
+- **Auth middleware:** Redirect unauthenticated users from protected routes
+- **Shared field helpers:** `slugField()` and `seoFields()` for collection reuse
+- **Site config:** Centralized name, description, URL, social links (`src/lib/site-config.ts`)
+- **Shared navigation:** Single source for nav links used in header and footer
+- **Access control helpers:** `authenticated`, `publishedOrAdmins`, `ownerOrAdmins`
+- **Image sizes:** Thumbnail (300x300), medium (800x600), large (1200x900) on Media collection
+- **Documentation:** Google OAuth, GitHub OAuth, deployment, and architecture decisions guides
+
+### Changed
+- Replaced Rose Pine Moon CSS theme with documented Indigo/Slate palette (light + dark)
+- Role system migrated from User.role select field to junction table pattern (Role + UserRole)
+- Renamed `UserRole` enum to `RoleName` to avoid conflict with Payload-generated types
+- First-user-admin logic now uses cheap count guard before serializable transaction
+- Auth error page uses semantic color tokens instead of raw Tailwind colors
+- Header, footer, hero, CTA now use siteConfig and shared navigation (no hardcoded values)
+- Lexical editor configured with headings, blockquote, horizontal rule, links, uploads
+- `siteConfig.url` uses `NEXT_PUBLIC_SITE_URL` with `VERCEL_PROJECT_PRODUCTION_URL` and `AUTH_URL` fallbacks
+- Dead links removed (/products, /pricing, /docs, /auth/register, /dashboard)
+
+### Fixed
+- `slugField()` now correctly uses the `sourceField` parameter instead of hardcoding title/name
+- RSS feed escapes CDATA content and XML-escapes channel metadata
+- Error boundaries display generic messages instead of potentially leaking internal details
+- Junction table hooks pass `req` to `payload.count()` for transaction safety
+- `PostCard` accepts partial post type matching `select` query fields
+- Unused imports removed (Link in blog page, anyone/authenticated in collections)
+
+### Removed
+- `src/lib/links.ts` (replaced by site-config.ts)
+- `src/lib/payloadClient.ts` dead code (queryPayload function for non-existent API endpoint)
+- User.role select field (replaced by junction table)
+
 ## [0.3.1] - 2026-02-17
 
 ### Improvements

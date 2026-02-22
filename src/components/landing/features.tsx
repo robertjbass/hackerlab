@@ -1,4 +1,11 @@
-import { Boxes, Code, GitBranch, Shield, Terminal, Zap } from '@/components/icons'
+import {
+  Boxes,
+  Code,
+  GitBranch,
+  Shield,
+  Terminal,
+  Zap,
+} from '@/components/icons'
 
 const features = [
   {

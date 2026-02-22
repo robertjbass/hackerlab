@@ -28,11 +28,29 @@ export function AuthjsStrategy(): AuthStrategy {
           return { user: null }
         }
 
+        // Enrich user with role names from the junction table
+        const { docs: roleAssignments } = await payload.find({
+          collection: 'user_role',
+          where: { user: { equals: userId } },
+          depth: 1,
+          limit: 20,
+        })
+        const roleNames = roleAssignments
+          .map((assignment) => {
+            const role = assignment.role
+            if (typeof role === 'object' && role !== null && 'name' in role) {
+              return role.name
+            }
+            return null
+          })
+          .filter((r): r is string => r !== null)
+
         return {
           user: {
             ...user,
             _strategy: 'authjs',
             collection: 'user' as const,
+            _roles: roleNames,
           },
         }
       } catch (error) {

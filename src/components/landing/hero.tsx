@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { ArrowRight, Github, Terminal } from '@/components/icons'
 import { Button } from '@/components/ui/button'
+import { siteConfig } from '@/lib/site-config'
 
 export function Hero() {
   return (
@@ -14,18 +15,18 @@ export function Hero() {
             </div>
           </div>
           <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl">
-            Developer Tools for{' '}
-            <span className="text-primary">Modern Workflows</span>
+            {siteConfig.tagline.replace(/(\S+)$/, '')}
+            <span className="text-primary">
+              {siteConfig.tagline.split(' ').pop()}
+            </span>
           </h1>
           <p className="mt-6 text-lg leading-8 text-slate-300">
-            Premium software tools built by developers, for developers.
-            Streamline your development process with our carefully crafted
-            solutions.
+            {siteConfig.description}
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-x-6">
             <Button asChild size="lg">
-              <Link href="/products">
-                Browse Products
+              <Link href="/auth/login">
+                Get Started
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
@@ -36,7 +37,7 @@ export function Hero() {
               className="border-slate-600 bg-transparent text-white hover:bg-slate-800 hover:text-white"
             >
               <Link
-                href="https://github.com"
+                href={siteConfig.social.github.url}
                 target="_blank"
                 rel="noopener noreferrer"
               >

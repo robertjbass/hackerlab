@@ -32,7 +32,8 @@ const styles = {
     maxWidth: '400px',
     backgroundColor: 'var(--theme-elevation-50, #fff)',
     borderRadius: '8px',
-    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+    boxShadow:
+      '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
     padding: '2rem',
   } satisfies CSSProperties,
   header: {
@@ -176,8 +177,8 @@ export function CustomLoginForm() {
       } else {
         try {
           const data: unknown = await res.json()
-          const message =
-            (data as { errors?: { message?: string }[] }).errors?.[0]?.message
+          const message = (data as { errors?: { message?: string }[] })
+            .errors?.[0]?.message
           setError(message || 'Invalid credentials')
         } catch {
           setError('Invalid credentials')
@@ -195,7 +196,8 @@ export function CustomLoginForm() {
     }
   }
 
-  const displayError = error || (errorParam ? 'Authentication failed. Please try again.' : '')
+  const displayError =
+    error || (errorParam ? 'Authentication failed. Please try again.' : '')
   const hasOAuth = providers.length > 0
 
   return (
@@ -215,7 +217,11 @@ export function CustomLoginForm() {
               return (
                 <form
                   key={provider.id}
-                  action={signInWithProvider.bind(null, provider.id, callbackUrl)}
+                  action={signInWithProvider.bind(
+                    null,
+                    provider.id,
+                    callbackUrl,
+                  )}
                 >
                   <button
                     type="submit"

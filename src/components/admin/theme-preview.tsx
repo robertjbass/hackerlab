@@ -272,7 +272,8 @@ export function ThemePreview() {
       {previewing && (
         <div style={s.previewBanner}>
           <span>
-            Previewing: <strong>{themes.find((t) => t.slug === selected)?.name}</strong>
+            Previewing:{' '}
+            <strong>{themes.find((t) => t.slug === selected)?.name}</strong>
           </span>
           <button
             type="button"

@@ -1,10 +1,6 @@
 import { admins, selfOrAdmins, adminsOnly } from '@/collections/shared/access'
 import { AuthjsStrategy } from '@/lib/auth/payload-strategy'
-import {
-  UserRole,
-  userRoleOptions,
-  authProviderOptions,
-} from '@/collections/User/constants'
+import { authProviderOptions } from '@/collections/User/constants'
 import { type CollectionConfig } from 'payload'
 
 const User: CollectionConfig<'user'> = {
@@ -14,7 +10,6 @@ const User: CollectionConfig<'user'> = {
     defaultColumns: [
       'email',
       'name',
-      'role',
       'authProvider',
       'lastAuthMethod',
       'updatedAt',
@@ -27,7 +22,7 @@ const User: CollectionConfig<'user'> = {
     create: admins,
     update: selfOrAdmins,
     delete: admins,
-    admin: admins,
+    admin: adminsOnly,
   },
   auth: {
     useSessions: false,
@@ -57,16 +52,17 @@ const User: CollectionConfig<'user'> = {
       },
     },
     {
-      name: 'role',
-      type: 'select',
-      defaultValue: UserRole.User,
-      required: true,
-      options: userRoleOptions,
+      name: 'bio',
+      type: 'textarea',
       access: {
         read: () => true,
-        create: admins,
-        update: admins,
       },
+    },
+    {
+      name: 'roles',
+      type: 'join',
+      collection: 'user_role',
+      on: 'user',
     },
     {
       name: 'authProvider',
@@ -169,7 +165,7 @@ const User: CollectionConfig<'user'> = {
       index: true,
       access: {
         read: () => false,
-        update: admins,
+        update: adminsOnly,
       },
       admin: {
         hidden: true,
@@ -182,7 +178,7 @@ const User: CollectionConfig<'user'> = {
       type: 'date',
       access: {
         read: () => false,
-        update: admins,
+        update: adminsOnly,
       },
       admin: {
         hidden: true,
