@@ -333,6 +333,21 @@ body {
   animation: cta-blob-alt 12s ease-in-out infinite;
 }
 
+/* Mobile nav item stagger */
+@keyframes mobile-nav-item {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+.animate-mobile-nav-item {
+  animation: mobile-nav-item 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
 /* Accessibility: disable animations */
 @media (prefers-reduced-motion: reduce) {
   .animate-hero-entrance,
@@ -340,7 +355,8 @@ body {
   .animate-fade-in-delayed,
   .animate-blob-drift,
   .animate-cta-blob,
-  .animate-cta-blob-alt {
+  .animate-cta-blob-alt,
+  .animate-mobile-nav-item {
     animation: none !important;
   }
   .scroll-reveal,

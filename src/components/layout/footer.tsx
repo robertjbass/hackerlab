@@ -18,7 +18,7 @@ export function Footer() {
                   {siteConfig.name}
                 </span>
                 <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">
-                  Developer Tools
+                  Starter Template
                 </p>
               </div>
             </Link>
@@ -58,8 +58,9 @@ export function Footer() {
                       {...(link.external
                         ? { target: '_blank', rel: 'noopener noreferrer' }
                         : {})}
-                      className="inline-block py-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                      className="inline-flex items-center gap-2 py-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
                     >
+                      {link.icon && <link.icon className="h-3.5 w-3.5" />}
                       {link.label}
                     </Link>
                   </li>
@@ -75,7 +76,7 @@ export function Footer() {
               &copy; {new Date().getFullYear()} {siteConfig.copyright}
             </p>
             <p className="text-sm text-muted-foreground/50">
-              Built with care for developers
+              Open-source starter template
             </p>
           </div>
         </div>

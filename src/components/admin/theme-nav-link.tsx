@@ -2,6 +2,7 @@ import React from 'react'
 
 export function ThemeNavLink() {
   return (
+    // eslint-disable-next-line @next/next/no-html-link-for-pages -- Payload admin uses full-page nav, not client-side routing
     <a
       href="/admin/theme"
       style={{

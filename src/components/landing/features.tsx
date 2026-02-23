@@ -1,44 +1,70 @@
 import {
-  Boxes,
-  Code,
+  ArrowUpCircle,
+  Blocks,
+  Database,
+  FileText,
   GitBranch,
-  Shield,
+  KeyRound,
+  Paintbrush,
+  Smartphone,
   Terminal,
-  Zap,
 } from '@/components/icons'
 import { ScrollReveal } from '@/components/scroll-reveal'
 
 const features = [
   {
-    name: 'Lightning Fast',
+    name: 'Payload CMS',
     description:
-      'Optimized for performance. No bloat, just the tools you need.',
-    icon: Zap,
+      'Full admin panel, collections, and content management out of the box with auto-generated TypeScript types.',
+    icon: Blocks,
   },
   {
-    name: 'Secure by Default',
-    description: 'Built with security in mind. Your data stays private.',
-    icon: Shield,
+    name: 'Auth Ready',
+    description:
+      'GitHub and Google OAuth, magic link email sign-in, and a clean RBAC user system ready to go.',
+    icon: KeyRound,
   },
   {
-    name: 'Developer First',
-    description: 'Created by developers who understand your workflow.',
-    icon: Code,
+    name: 'Postgres + Vercel',
+    description:
+      'Deploy to Vercel with Neon Postgres, Vercel Blob storage, and branch-aware database support.',
+    icon: Database,
   },
   {
-    name: 'Version Control',
-    description: 'Seamless integration with Git and your favorite tools.',
+    name: 'VS Code Themes',
+    description:
+      'Built-in theme engine compatible with the VS Code ecosystem. Browse, preview, and apply thousands of themes.',
+    icon: Paintbrush,
+  },
+  {
+    name: 'Mobile Friendly',
+    description:
+      'Responsive design with TailwindCSS v4, shadcn/ui components, and a mobile-first layout.',
+    icon: Smartphone,
+  },
+  {
+    name: 'Easy Upgrades',
+    description:
+      'Payload, Next.js, React, and ESLint are all independently upgradable. No lock-in to outdated versions.',
+    icon: ArrowUpCircle,
+  },
+  {
+    name: 'Changelog Management',
+    description:
+      'Built-in changelog with version bumping scripts. Publish release notes that render automatically on the site.',
+    icon: FileText,
+  },
+  {
+    name: 'Migration Management',
+    description:
+      'Payload-managed database migrations with dev push mode for rapid iteration and production-safe rollouts.',
     icon: GitBranch,
   },
   {
-    name: 'CLI Support',
-    description: 'Powerful command-line interfaces for automation.',
+    name: 'Dev Tooling',
+    description:
+      'Opinionated lint and type-check rules, built-in scripts, LLM-ready CLAUDE.md, and email support baked in.',
     icon: Terminal,
-  },
-  {
-    name: 'Modular Design',
-    description: 'Pick and choose the tools that fit your needs.',
-    icon: Boxes,
   },
 ]
 
@@ -50,10 +76,10 @@ export function Features() {
         <div className="mx-auto mb-4 h-px w-24 bg-linear-to-r from-transparent via-primary/40 to-transparent" />
         <ScrollReveal className="max-w-xl">
           <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            Built for developers
+            Everything you need, nothing you don&apos;t
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            Tools that integrate seamlessly into your development workflow
+            Clone the repo, configure your environment variables, and deploy. All the hard parts are already wired up.
           </p>
         </ScrollReveal>
         <div className="mt-16">
