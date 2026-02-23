@@ -64,6 +64,12 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
     components: {
+      afterDashboard: [
+        '@/components/admin/dashboard-tools.tsx#DashboardTools',
+      ],
+      afterNavLinks: [
+        '@/components/admin/theme-nav-link.tsx#ThemeNavLink',
+      ],
       views: {
         login: {
           Component: '@/components/admin/custom-login-form.tsx#CustomLoginForm',

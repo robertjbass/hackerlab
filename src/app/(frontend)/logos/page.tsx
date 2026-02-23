@@ -118,16 +118,16 @@ export default function LogosPage() {
                     Color variations
                   </p>
                   <div className="flex items-center gap-6">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-900">
-                      <logo.Component className="h-6 w-6 text-white" />
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-foreground">
+                      <logo.Component className="h-6 w-6 text-background" />
                     </div>
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white ring-1 ring-border/50">
-                      <logo.Component className="h-6 w-6 text-slate-900" />
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-background ring-1 ring-border/50">
+                      <logo.Component className="h-6 w-6 text-foreground" />
                     </div>
                     <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-linear-to-br from-primary to-primary/70">
                       <logo.Component className="h-6 w-6 text-primary-foreground" />
                     </div>
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-800">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-foreground/90">
                       <logo.Component className="h-6 w-6 text-primary" />
                     </div>
                   </div>
