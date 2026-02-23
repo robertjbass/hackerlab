@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { LogOut, Menu, Terminal, X } from '@/components/icons'
+import { LogoBeakerFlask, LogOut, Menu, X } from '@/components/icons'
 import { Button } from '@/components/ui/button'
 import { siteConfig } from '@/lib/site-config'
 import { mainNavLinks } from '@/lib/navigation'
@@ -23,9 +23,7 @@ export function Header({ user }: HeaderProps) {
       <nav className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4 lg:px-8">
         <div className="flex items-center gap-x-12">
           <Link href="/" className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-linear-to-br from-primary to-primary/70 shadow-lg shadow-primary/20">
-              <Terminal className="h-4.5 w-4.5 text-primary-foreground" />
-            </div>
+            <LogoBeakerFlask className="h-7 w-7 text-primary" />
             <span className="text-lg font-semibold tracking-tight text-foreground">
               {siteConfig.name}
             </span>

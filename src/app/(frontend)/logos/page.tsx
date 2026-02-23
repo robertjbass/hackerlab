@@ -3,6 +3,12 @@ import {
   LogoTerminalPrompt,
   LogoCodeBrackets,
   LogoHexCircuit,
+  LogoStackedLayers,
+  LogoAtomOrbital,
+  LogoHashMark,
+  LogoShieldLock,
+  LogoPulseMonitor,
+  LogoCurlyBraces,
 } from '@/components/logos'
 import { ScrollReveal } from '@/components/scroll-reveal'
 
@@ -30,6 +36,42 @@ const logos = [
     description:
       'A hexagonal shell with circuit traces radiating from a central node. Merges the "lab" and "hacker" identities.',
   },
+  {
+    Component: LogoStackedLayers,
+    name: 'Stacked Layers',
+    description:
+      'Three offset rounded rectangles stacked in perspective, representing the full stack. Depth via decreasing opacity.',
+  },
+  {
+    Component: LogoAtomOrbital,
+    name: 'Atom Orbital',
+    description:
+      'An atom with three elliptical orbits and electrons around a central nucleus. Evokes experimentation and interconnected systems.',
+  },
+  {
+    Component: LogoHashMark,
+    name: 'Hash Mark',
+    description:
+      'A bold # rotated slightly with varied stroke weight, referencing code comments and root prompts. Typographic and raw.',
+  },
+  {
+    Component: LogoShieldLock,
+    name: 'Shield Lock',
+    description:
+      'A shield outline with a keyhole cutout, emphasizing security-first development. Gradient fill adds subtle depth.',
+  },
+  {
+    Component: LogoPulseMonitor,
+    name: 'Pulse Monitor',
+    description:
+      'A heartbeat waveform inside a monitor frame, suggesting live systems, uptime monitoring, and running processes.',
+  },
+  {
+    Component: LogoCurlyBraces,
+    name: 'Curly Braces',
+    description:
+      'A pair of thick curly braces with a center dot, representing an object literal or block scope. Minimal and typographic.',
+  },
 ]
 
 export default function LogosPage() {
@@ -43,7 +85,7 @@ export default function LogosPage() {
             Logo Concepts
           </h1>
           <p className="mt-4 max-w-xl text-lg text-muted-foreground">
-            Three directions for the Hackerlab mark. Each renders as a single-color SVG
+            Nine directions for the Hackerlab mark. Each renders as a single-color SVG
             that inherits <code className="rounded bg-muted px-1.5 py-0.5 text-sm font-mono">currentColor</code>.
           </p>
         </ScrollReveal>

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Github, Terminal, X } from '@/components/icons'
+import { Github, LogoBeakerFlask, X } from '@/components/icons'
 import { siteConfig } from '@/lib/site-config'
 import { footerNavGroups } from '@/lib/navigation'
 
@@ -12,9 +12,7 @@ export function Footer() {
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="flex items-center gap-2.5">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-linear-to-br from-primary to-primary/70 shadow-lg shadow-primary/20">
-                <Terminal className="h-4.5 w-4.5 text-primary-foreground" />
-              </div>
+              <LogoBeakerFlask className="h-7 w-7 text-primary" />
               <div>
                 <span className="text-lg font-semibold tracking-tight text-foreground">
                   {siteConfig.name}

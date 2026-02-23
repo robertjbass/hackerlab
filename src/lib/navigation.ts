@@ -20,6 +20,7 @@ export const footerNavGroups: FooterNavGroup[] = [
     links: [
       { label: 'Blog', href: '/blog' },
       { label: 'Changelog', href: '/changelog' },
+      { label: 'Logo Concepts', href: '/logos' },
     ],
   },
   {

@@ -60,6 +60,8 @@ Twitter.displayName = 'Twitter'
 export { Google } from '@/components/icons/google'
 // GithubIcon: filled brand logo (for OAuth buttons in admin panel)
 export { GithubIcon } from '@/components/icons/github'
+// Hackerlab brand logo (beaker flask)
+export { LogoBeakerFlask } from '@/components/logos'
 
 // Github: outline/stroke icon (for UI elements like links and buttons)
 export {
