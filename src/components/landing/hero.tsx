@@ -3,7 +3,11 @@ import { ArrowRight, Github, Terminal } from '@/components/icons'
 import { Button } from '@/components/ui/button'
 import { siteConfig } from '@/lib/site-config'
 
-export function Hero() {
+type HeroProps = {
+  loggedIn?: boolean
+}
+
+export function Hero({ loggedIn }: HeroProps) {
   return (
     <section className="relative overflow-hidden bg-linear-to-b from-slate-900 to-slate-950 py-24 sm:py-32">
       <div className="absolute inset-0 bg-dot-pattern" />
@@ -38,8 +42,8 @@ export function Hero() {
             style={{ animationDelay: '0.3s' }}
           >
             <Button asChild size="lg" className="shadow-xl shadow-primary/25">
-              <Link href="/auth/login">
-                Get Started
+              <Link href={loggedIn ? '/admin' : '/auth/login'}>
+                {loggedIn ? 'Dashboard' : 'Get Started'}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
