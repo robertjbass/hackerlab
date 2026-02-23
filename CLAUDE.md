@@ -43,6 +43,7 @@ src/
 ## Collections
 - All collection slugs are singular (e.g., `user`, `media`)
 - Collections use typed slugs: `CollectionConfig<'user'>`
+- All collections must have explicit `labels: { singular, plural }` — Payload's auto-generated labels from slugs produce ugly results (e.g., `User_roles` instead of `User Roles`)
 - Each collection directory has: `index.ts` (config), `constants.ts` (enums/options), `hooks.ts` (access helpers)
 - Access helpers (`anyone`, `admins`) live in `collections/shared/access.ts` and are shared across collections
 - Admin groups: User → "Admin", Media → "Assets"

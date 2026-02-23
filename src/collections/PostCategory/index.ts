@@ -3,6 +3,7 @@ import { type CollectionConfig } from 'payload'
 
 const PostCategory: CollectionConfig<'post_category'> = {
   slug: 'post_category',
+  labels: { singular: 'Post Category', plural: 'Post Categories' },
   admin: {
     group: 'Content',
     defaultColumns: ['post', 'category', 'createdAt'],
