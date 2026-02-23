@@ -1,6 +1,114 @@
 'use client'
 
-import { useState, useEffect, type CSSProperties } from 'react'
+import { useState, useEffect, useRef, useCallback, type CSSProperties } from 'react'
+
+// ---------------------------------------------------------------------------
+// Popular VS Code themes for autocomplete suggestions
+// ---------------------------------------------------------------------------
+
+const POPULAR_THEMES = [
+  'Dracula',
+  'One Dark Pro',
+  'Nord',
+  'Monokai Pro',
+  'Tokyo Night',
+  'Catppuccin',
+  'Gruvbox',
+  'Solarized',
+  'Material Theme',
+  'Ayu',
+  'Palenight',
+  'Synthwave 84',
+  'Night Owl',
+  'Cobalt2',
+  'Shades of Purple',
+  'Atom One Dark',
+  'Horizon',
+  'Panda Theme',
+  'Vitesse',
+  'Rosé Pine',
+  'Everforest',
+  'Kanagawa',
+  'Vesper',
+  'GitHub Theme',
+  'One Monokai',
+  'Moonlight',
+  'Noctis',
+  'Bearded Theme',
+  'Winter is Coming',
+  'Andromeda',
+  'Blueberry Dark',
+  'Houston',
+  'Aura Theme',
+  'Dracula Official',
+  'Monokai',
+  'Monokai Night',
+  'One Dark',
+  'Atom One Light',
+  'Community Material Theme',
+  'Halcyon',
+  'Cyberpunk',
+  'Outrun',
+  'LaserWave',
+  'Copilot Theme',
+  'Xcode Theme',
+  'Sublime Material Theme',
+  'Lucy',
+  'Dark+',
+  'Light+',
+  'Quiet Light',
+  'Kimbie Dark',
+  'Tomorrow Night Blue',
+  'Monokai Dimmed',
+  'High Contrast',
+  'Flatland Monokai',
+  'Darcula',
+  'Firefox Theme',
+  'Seti',
+  'Bluloco',
+  'After Dark',
+  'Sapphire',
+  'Ariake Dark',
+  'Pitch Black',
+  'Mayukai',
+  'Snazzy',
+  'Rainglow',
+  'Pop Theme',
+  'JellyFish',
+  'Hop Light',
+  'Omni',
+  'Min Theme',
+  'Plastic',
+  'Overnight',
+  'ReUI',
+  'Base16',
+  'Electron',
+  'Whimsy',
+  'Remedy',
+  'Moxer',
+  'City Lights',
+  'Just Black',
+  'Hyper Term',
+  'Noir',
+  'Aurora X',
+  'After Glow',
+  'Dark Candy',
+  'Field Lights',
+  'Dobri Next',
+  'Serendipity',
+  'Codemos',
+  'Flexoki',
+  'Enfocado',
+  'Poimandres',
+  'Adwaita',
+  'Spacegray',
+  'Sublime Monokai',
+  'Nocturnal',
+  'Palenight Italic',
+  'Sweet Dracula',
+  'Dark Horizon',
+  'SynthWave',
+]
 
 type PreviewColors = {
   activityBar: string
@@ -110,7 +218,9 @@ const s = {
     border: 'none',
     background: 'none',
     color: 'var(--theme-elevation-500, #6b7280)',
-    borderBottom: '2px solid transparent',
+    borderBottomWidth: '2px',
+    borderBottomStyle: 'solid',
+    borderBottomColor: 'transparent',
     marginBottom: '-2px',
     transition: 'color 0.15s, border-color 0.15s',
   } satisfies CSSProperties,
@@ -194,8 +304,13 @@ const s = {
     marginBottom: '1rem',
   } satisfies CSSProperties,
 
-  searchInput: {
+  searchWrapper: {
     flex: 1,
+    position: 'relative',
+  } satisfies CSSProperties,
+
+  searchInput: {
+    width: '100%',
     padding: '0.5rem 0.75rem',
     borderRadius: '6px',
     border: '1px solid var(--theme-elevation-150, #d1d5db)',
@@ -203,6 +318,34 @@ const s = {
     outline: 'none',
     backgroundColor: 'var(--theme-input-bg, #fff)',
     color: 'var(--theme-text, #1f2937)',
+    boxSizing: 'border-box',
+  } satisfies CSSProperties,
+
+  suggestionsDropdown: {
+    position: 'absolute',
+    top: '100%',
+    left: 0,
+    right: 0,
+    marginTop: '2px',
+    maxHeight: '240px',
+    overflowY: 'auto',
+    borderRadius: '6px',
+    border: '1px solid var(--theme-elevation-150, #d1d5db)',
+    backgroundColor: 'var(--theme-input-bg, #fff)',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+    zIndex: 50,
+  } satisfies CSSProperties,
+
+  suggestionItem: {
+    padding: '0.5rem 0.75rem',
+    fontSize: '0.8125rem',
+    cursor: 'pointer',
+    color: 'var(--theme-text, #1f2937)',
+    borderBottom: '1px solid var(--theme-elevation-100, #f3f4f6)',
+  } satisfies CSSProperties,
+
+  suggestionHighlighted: {
+    backgroundColor: 'var(--theme-elevation-100, #f0f0f0)',
   } satisfies CSSProperties,
 
   btn: {
@@ -477,6 +620,46 @@ export function ThemePreview() {
   const [searchLoading, setSearchLoading] = useState(false)
   const [searchError, setSearchError] = useState('')
 
+  // Autocomplete state
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const [highlightedIndex, setHighlightedIndex] = useState(-1)
+  const suggestionsRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  const filteredSuggestions = searchQuery.trim().length > 0
+    ? POPULAR_THEMES.filter((t) =>
+        t.toLowerCase().includes(searchQuery.toLowerCase()),
+      ).slice(0, 15)
+    : []
+
+  const closeSuggestions = useCallback(() => {
+    setShowSuggestions(false)
+    setHighlightedIndex(-1)
+  }, [])
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (
+        suggestionsRef.current &&
+        !suggestionsRef.current.contains(e.target as Node) &&
+        inputRef.current &&
+        !inputRef.current.contains(e.target as Node)
+      ) {
+        closeSuggestions()
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [closeSuggestions])
+
+  // Scroll highlighted suggestion into view
+  useEffect(() => {
+    if (highlightedIndex >= 0 && suggestionsRef.current) {
+      const items = suggestionsRef.current.children
+      items[highlightedIndex]?.scrollIntoView({ block: 'nearest' })
+    }
+  }, [highlightedIndex])
+
   // Extract state
   const [extractingUrl, setExtractingUrl] = useState<string | null>(null)
   const [extractedThemes, setExtractedThemes] = useState<
@@ -552,15 +735,17 @@ export function ThemePreview() {
     applyPreviewColors(extracted.previewColors)
   }
 
-  async function handleSearch() {
-    if (!searchQuery.trim()) return
+  async function handleSearch(query?: string) {
+    const q = query ?? searchQuery
+    if (!q.trim()) return
+    closeSuggestions()
     setSearchLoading(true)
     setSearchError('')
     try {
       const res = await fetch('/api/themes/search', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: searchQuery }),
+        body: JSON.stringify({ query: q }),
       })
       if (!res.ok) {
         const data = (await res.json()) as { error?: string }
@@ -579,6 +764,12 @@ export function ThemePreview() {
     } finally {
       setSearchLoading(false)
     }
+  }
+
+  function selectSuggestion(theme: string) {
+    setSearchQuery(theme)
+    closeSuggestions()
+    handleSearch(theme)
   }
 
   async function handleExtract(downloadUrl: string, key: string) {
@@ -693,73 +884,90 @@ export function ThemePreview() {
         </div>
       )}
 
-      {/* Apply panel */}
-      {hasSelection && (
-        <div style={s.applyPanel}>
-          <div style={s.applyHeader}>
-            <span style={s.applyTitle}>
-              Selected: {selectedName}{' '}
-              <span style={{ fontWeight: 400, opacity: 0.6 }}>
-                ({selectedType})
+      {/* Apply panel — always rendered to prevent layout shift */}
+      <div style={{
+        ...s.applyPanel,
+        ...(hasSelection ? {} : {
+          border: '2px dashed var(--theme-elevation-150, #e5e7eb)',
+          backgroundColor: 'transparent',
+        }),
+      }}>
+        {hasSelection ? (
+          <>
+            <div style={s.applyHeader}>
+              <span style={s.applyTitle}>
+                Selected: {selectedName}{' '}
+                <span style={{ fontWeight: 400, opacity: 0.6 }}>
+                  ({selectedType})
+                </span>
               </span>
-            </span>
-            <button
-              type="button"
-              onClick={resetPreview}
-              style={s.btnSecondary}
-            >
-              Reset Preview
-            </button>
-          </div>
-
-          <div style={s.modeSelector}>
-            <span style={{ fontWeight: 600 }}>Apply to:</span>
-            {(['light', 'dark', 'both'] as const).map((mode) => (
-              <label key={mode} style={s.radioLabel}>
-                <input
-                  type="radio"
-                  name="applyMode"
-                  value={mode}
-                  checked={applyMode === mode}
-                  onChange={() => setApplyMode(mode)}
-                />
-                {mode.charAt(0).toUpperCase() + mode.slice(1)}
-              </label>
-            ))}
-          </div>
-
-          <div style={s.applyActions}>
-            <button
-              type="button"
-              onClick={handleApply}
-              disabled={!isDev || applyStatus === 'applying'}
-              style={{
-                ...s.btn,
-                ...(!isDev || applyStatus === 'applying'
-                  ? s.btnDisabled
-                  : {}),
-              }}
-            >
-              {applyStatus === 'applying' && <span style={s.spinner} />}
-              {applyStatus === 'applying' ? 'Applying...' : 'Apply Theme'}
-            </button>
-          </div>
-
-          {applyMessage && (
-            <div
-              style={{
-                ...s.statusBanner,
-                backgroundColor:
-                  applyStatus === 'success' ? '#ecfdf5' : '#fef2f2',
-                color: applyStatus === 'success' ? '#065f46' : '#991b1b',
-                border: `1px solid ${applyStatus === 'success' ? '#a7f3d0' : '#fecaca'}`,
-              }}
-            >
-              {applyMessage}
+              <button
+                type="button"
+                onClick={resetPreview}
+                style={s.btnSecondary}
+              >
+                Reset Preview
+              </button>
             </div>
-          )}
-        </div>
-      )}
+
+            <div style={s.modeSelector}>
+              <span style={{ fontWeight: 600 }}>Apply to:</span>
+              {(['light', 'dark', 'both'] as const).map((mode) => (
+                <label key={mode} style={s.radioLabel}>
+                  <input
+                    type="radio"
+                    name="applyMode"
+                    value={mode}
+                    checked={applyMode === mode}
+                    onChange={() => setApplyMode(mode)}
+                  />
+                  {mode.charAt(0).toUpperCase() + mode.slice(1)}
+                </label>
+              ))}
+            </div>
+
+            <div style={s.applyActions}>
+              <button
+                type="button"
+                onClick={handleApply}
+                disabled={!isDev || applyStatus === 'applying'}
+                style={{
+                  ...s.btn,
+                  ...(!isDev || applyStatus === 'applying'
+                    ? s.btnDisabled
+                    : {}),
+                }}
+              >
+                {applyStatus === 'applying' && <span style={s.spinner} />}
+                {applyStatus === 'applying' ? 'Applying...' : 'Apply Theme'}
+              </button>
+            </div>
+
+            {applyMessage && (
+              <div
+                style={{
+                  ...s.statusBanner,
+                  backgroundColor:
+                    applyStatus === 'success' ? '#ecfdf5' : '#fef2f2',
+                  color: applyStatus === 'success' ? '#065f46' : '#991b1b',
+                  border: `1px solid ${applyStatus === 'success' ? '#a7f3d0' : '#fecaca'}`,
+                }}
+              >
+                {applyMessage}
+              </div>
+            )}
+          </>
+        ) : (
+          <div style={{
+            color: 'var(--theme-elevation-500, #9ca3af)',
+            fontSize: '0.8125rem',
+            textAlign: 'center',
+            padding: '0.5rem 0',
+          }}>
+            Click a theme below to preview and apply it
+          </div>
+        )}
+      </div>
 
       {/* Tab bar */}
       <div style={s.tabBar}>
@@ -814,19 +1022,77 @@ export function ThemePreview() {
       {tab === 'search' && (
         <>
           <div style={s.searchRow}>
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') handleSearch()
-              }}
-              placeholder="Search themes (e.g. Dracula, One Dark, Nord...)"
-              style={s.searchInput}
-            />
+            <div style={s.searchWrapper}>
+              <input
+                ref={inputRef}
+                type="text"
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value)
+                  setShowSuggestions(e.target.value.trim().length > 0)
+                  setHighlightedIndex(-1)
+                }}
+                onFocus={() => {
+                  if (searchQuery.trim().length > 0 && filteredSuggestions.length > 0) {
+                    setShowSuggestions(true)
+                  }
+                }}
+                onKeyDown={(e) => {
+                  if (showSuggestions && filteredSuggestions.length > 0) {
+                    if (e.key === 'ArrowDown') {
+                      e.preventDefault()
+                      setHighlightedIndex((i) =>
+                        i < filteredSuggestions.length - 1 ? i + 1 : 0,
+                      )
+                    } else if (e.key === 'ArrowUp') {
+                      e.preventDefault()
+                      setHighlightedIndex((i) =>
+                        i > 0 ? i - 1 : filteredSuggestions.length - 1,
+                      )
+                    } else if (e.key === 'Enter') {
+                      e.preventDefault()
+                      if (highlightedIndex >= 0) {
+                        selectSuggestion(filteredSuggestions[highlightedIndex])
+                      } else {
+                        handleSearch()
+                      }
+                    } else if (e.key === 'Escape') {
+                      closeSuggestions()
+                    }
+                  } else if (e.key === 'Enter') {
+                    handleSearch()
+                  }
+                }}
+                placeholder="Search themes (e.g. Dracula, One Dark, Nord...)"
+                style={s.searchInput}
+                autoComplete="off"
+              />
+              {showSuggestions && filteredSuggestions.length > 0 && (
+                <div ref={suggestionsRef} style={s.suggestionsDropdown}>
+                  {filteredSuggestions.map((theme, i) => (
+                    <div
+                      key={theme}
+                      onMouseDown={(e) => {
+                        e.preventDefault()
+                        selectSuggestion(theme)
+                      }}
+                      onMouseEnter={() => setHighlightedIndex(i)}
+                      style={{
+                        ...s.suggestionItem,
+                        ...(i === highlightedIndex
+                          ? s.suggestionHighlighted
+                          : {}),
+                      }}
+                    >
+                      {theme}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
             <button
               type="button"
-              onClick={handleSearch}
+              onClick={() => handleSearch()}
               disabled={searchLoading || !searchQuery.trim()}
               style={{
                 ...s.btn,

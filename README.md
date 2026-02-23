@@ -230,6 +230,14 @@ VS Code theme JSON → resolveTheme() → CSS variable map → rewriteGlobalsCss
 4. **Active config** (`src/themes/active.json`) tracks which theme is applied to each mode
 5. A one-time backup is created at `globals.css.backup` before the first write
 
+## Logo
+
+The active brand mark is the **Beaker Flask** — an Erlenmeyer flask SVG that uses `currentColor` and scales to any size. It appears in the header, footer, hero badge, and favicon (`src/app/icon.svg`).
+
+The component lives in `src/components/logos.tsx` as `LogoBeakerFlask` and is re-exported from the icons barrel file (`@/components/icons`).
+
+Nine additional concept logos are viewable at [`/logos`](/logos). All concepts are single-color SVGs in the same file, each accepting a `className` prop for sizing and color.
+
 ## Changelog
 
 The `/changelog` route fetches [`CHANGELOG.md`](CHANGELOG.md) from the public GitHub repo and renders it with `react-markdown`. The page uses ISR with a 1-hour revalidation interval so updates appear without a redeploy.

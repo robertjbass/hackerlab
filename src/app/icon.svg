@@ -1,1 +1,17 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" x2="20" y1="19" y2="19"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
+  <!-- Flask neck -->
+  <line x1="13" y1="3" x2="13" y2="12" stroke="#4f46e5" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="19" y1="3" x2="19" y2="12" stroke="#4f46e5" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Neck rim -->
+  <line x1="11" y1="3" x2="21" y2="3" stroke="#4f46e5" stroke-width="1.5" stroke-linecap="round" stroke-opacity="0.6"/>
+  <!-- Flask body -->
+  <path d="M13 12 L6 25 Q5 28 8 28 L24 28 Q27 28 26 25 L19 12" stroke="#4f46e5" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round" fill="#4f46e5" fill-opacity="0.08"/>
+  <!-- Liquid level -->
+  <path d="M8.5 22 L23.5 22 L26 25 Q27 28 24 28 L8 28 Q5 28 6 25 Z" fill="#4f46e5" fill-opacity="0.15"/>
+  <!-- Bubbles -->
+  <circle cx="13" cy="25" r="1.2" fill="#4f46e5" fill-opacity="0.35"/>
+  <circle cx="18" cy="24" r="0.9" fill="#4f46e5" fill-opacity="0.25"/>
+  <circle cx="11" cy="19" r="1" fill="#4f46e5" fill-opacity="0.3"/>
+  <circle cx="18" cy="17.5" r="0.75" fill="#4f46e5" fill-opacity="0.25"/>
+  <circle cx="14.5" cy="16" r="0.5" fill="#4f46e5" fill-opacity="0.2"/>
+</svg>

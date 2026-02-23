@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowRight, Github, Terminal } from '@/components/icons'
+import { ArrowRight, Github, LogoBeakerFlask } from '@/components/icons'
 import { Button } from '@/components/ui/button'
 import { siteConfig } from '@/lib/site-config'
 
@@ -16,8 +16,8 @@ export function Hero({ loggedIn }: HeroProps) {
       <div className="relative mx-auto max-w-5xl px-6 lg:px-8">
         <div className="max-w-2xl">
           <div className="mb-8 animate-hero-entrance">
-            <div className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-4 py-1.5 text-sm font-medium text-indigo-300 shadow-lg shadow-primary/10">
-              <Terminal className="h-4 w-4" />
+            <div className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary shadow-lg shadow-primary/10">
+              <LogoBeakerFlask className="h-4 w-4" />
               Developer Toolkit
             </div>
           </div>
@@ -51,7 +51,7 @@ export function Hero({ loggedIn }: HeroProps) {
               asChild
               variant="outline"
               size="lg"
-              className="border-slate-600 bg-transparent text-white hover:bg-slate-800 hover:text-white"
+              className="border-white/20 bg-transparent text-white hover:bg-white/10 hover:text-white"
             >
               <Link
                 href={siteConfig.social.github.url}
