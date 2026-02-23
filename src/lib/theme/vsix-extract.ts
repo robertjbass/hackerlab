@@ -77,7 +77,7 @@ export async function extractThemesFromVsix(
   }
 
   const pkgRaw = await pkgFile.async('string')
-  const pkg = JSON.parse(pkgRaw) as {
+  let pkg: {
     contributes?: {
       themes?: Array<{
         label?: string
@@ -85,6 +85,11 @@ export async function extractThemesFromVsix(
         path?: string
       }>
     }
+  }
+  try {
+    pkg = JSON.parse(pkgRaw)
+  } catch (error) {
+    throw new Error('Failed to parse extension/package.json in VSIX', { cause: error })
   }
 
   const contributions = pkg.contributes?.themes ?? []

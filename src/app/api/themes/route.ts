@@ -16,14 +16,18 @@ export async function GET() {
     (f) => f.endsWith('.json') && f !== 'active.json',
   )
 
-  const themes = files.map((file) => {
-    const raw = readFileSync(resolve(THEMES_DIR, file), 'utf-8')
-    const parsed = JSON.parse(raw) as VSCodeTheme
-    return {
-      slug: file.replace('.json', ''),
-      name: parsed.name || file.replace('.json', ''),
-      type: parsed.type === 'light' ? ('light' as const) : ('dark' as const),
-      previewColors: extractPreviewColors(parsed.colors),
+  const themes = files.flatMap((file) => {
+    try {
+      const raw = readFileSync(resolve(THEMES_DIR, file), 'utf-8')
+      const parsed = JSON.parse(raw) as VSCodeTheme
+      return [{
+        slug: file.replace('.json', ''),
+        name: parsed.name || file.replace('.json', ''),
+        type: parsed.type === 'light' ? ('light' as const) : ('dark' as const),
+        previewColors: extractPreviewColors(parsed.colors),
+      }]
+    } catch {
+      return []
     }
   })
 

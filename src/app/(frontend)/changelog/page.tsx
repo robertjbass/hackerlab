@@ -20,7 +20,7 @@ export default async function ChangelogPage() {
   let markdown: string | null = null
 
   try {
-    const res = await fetch(CHANGELOG_URL, { next: { revalidate: 3600 } })
+    const res = await fetch(CHANGELOG_URL)
     if (res.ok) {
       markdown = await res.text()
     }

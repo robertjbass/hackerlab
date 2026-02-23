@@ -49,7 +49,19 @@ export async function POST(request: Request) {
     let slug: string
 
     if (body.slug) {
+      if (!/^[a-z0-9_-]+$/i.test(body.slug)) {
+        return NextResponse.json(
+          { error: 'Invalid slug: only alphanumeric, dash, and underscore allowed' },
+          { status: 400 },
+        )
+      }
       const themePath = resolve(THEMES_DIR, `${body.slug}.json`)
+      if (!themePath.startsWith(THEMES_DIR)) {
+        return NextResponse.json(
+          { error: 'Invalid slug' },
+          { status: 400 },
+        )
+      }
       if (!existsSync(themePath)) {
         return NextResponse.json(
           { error: `Theme not found: ${body.slug}` },
@@ -57,7 +69,14 @@ export async function POST(request: Request) {
         )
       }
       const raw = readFileSync(themePath, 'utf-8')
-      theme = JSON.parse(raw) as VSCodeTheme
+      try {
+        theme = JSON.parse(raw) as VSCodeTheme
+      } catch {
+        return NextResponse.json(
+          { error: `Malformed theme JSON: ${body.slug}` },
+          { status: 400 },
+        )
+      }
       slug = body.slug
     } else if (body.theme) {
       if (!body.theme.colors || typeof body.theme.colors !== 'object') {
