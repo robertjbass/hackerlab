@@ -19,7 +19,7 @@ type SiteConfig = {
 export const siteConfig: SiteConfig = {
   name: 'Hackerlab',
   description:
-    'Premium software tools built by developers, for developers. Streamline your development process.',
+    'A batteries-included Next.js + Payload CMS starter. Clone it, deploy to Vercel, and start building.',
   url:
     process.env.NEXT_PUBLIC_SITE_URL ||
     (process.env.VERCEL_PROJECT_PRODUCTION_URL
@@ -28,7 +28,7 @@ export const siteConfig: SiteConfig = {
     process.env.AUTH_URL ||
     'http://localhost:3000',
   copyright: 'Layerbase, LLC | dba Hackerlab',
-  tagline: 'Developer Tools for Modern Workflows',
+  tagline: 'Ship Your Next Project Faster',
   social: {
     github: {
       url: 'https://github.com/robertjbass/hackerlab',

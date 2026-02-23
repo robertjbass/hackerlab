@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { ArrowRight, Github, LogoBeakerFlask } from '@/components/icons'
 import { Button } from '@/components/ui/button'
 import { siteConfig } from '@/lib/site-config'
+import { TerminalClone } from '@/components/landing/terminal-clone'
 
 type HeroProps = {
   loggedIn?: boolean
@@ -18,7 +19,7 @@ export function Hero({ loggedIn }: HeroProps) {
           <div className="mb-8 animate-hero-entrance">
             <div className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary shadow-lg shadow-primary/10">
               <LogoBeakerFlask className="h-4 w-4" />
-              Developer Toolkit
+              Open-Source Starter Template
             </div>
           </div>
           <h1
@@ -42,26 +43,46 @@ export function Hero({ loggedIn }: HeroProps) {
             style={{ animationDelay: '0.3s' }}
           >
             <Button asChild size="lg" className="shadow-xl shadow-primary/25">
-              <Link href={loggedIn ? '/admin' : '/auth/login'}>
-                {loggedIn ? 'Dashboard' : 'Get Started'}
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-            <Button
-              asChild
-              variant="outline"
-              size="lg"
-              className="border-white/20 bg-transparent text-white hover:bg-white/10 hover:text-white"
-            >
               <Link
                 href={siteConfig.social.github.url}
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 <Github className="mr-2 h-5 w-5" />
-                View on GitHub
+                Clone the Repo
               </Link>
             </Button>
+            {loggedIn ? (
+              <Button
+                asChild
+                variant="outline"
+                size="lg"
+                className="border-white/20 bg-transparent text-white hover:bg-white/10 hover:text-white"
+              >
+                <Link href="/admin">
+                  Dashboard
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            ) : (
+              <Button
+                asChild
+                variant="outline"
+                size="lg"
+                className="border-white/20 bg-transparent text-white hover:bg-white/10 hover:text-white"
+              >
+                <Link href="/auth/login">
+                  Sign In
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            )}
+          </div>
+          <div
+            className="mt-12 animate-hero-entrance"
+            style={{ animationDelay: '0.4s' }}
+          >
+            <TerminalClone />
           </div>
         </div>
       </div>

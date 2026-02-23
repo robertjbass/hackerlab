@@ -18,7 +18,7 @@ export function Footer() {
                   {siteConfig.name}
                 </span>
                 <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">
-                  Developer Tools
+                  Starter Template
                 </p>
               </div>
             </Link>
@@ -75,7 +75,7 @@ export function Footer() {
               &copy; {new Date().getFullYear()} {siteConfig.copyright}
             </p>
             <p className="text-sm text-muted-foreground/50">
-              Built with care for developers
+              Open-source starter template
             </p>
           </div>
         </div>

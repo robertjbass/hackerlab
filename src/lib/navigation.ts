@@ -12,6 +12,11 @@ type FooterNavGroup = {
 export const mainNavLinks: NavLink[] = [
   { label: 'Blog', href: '/blog' },
   { label: 'Changelog', href: '/changelog' },
+  {
+    label: 'GitHub',
+    href: 'https://github.com/robertjbass/hackerlab',
+    external: true,
+  },
 ]
 
 export const footerNavGroups: FooterNavGroup[] = [
@@ -24,7 +29,14 @@ export const footerNavGroups: FooterNavGroup[] = [
     ],
   },
   {
-    title: 'Account',
-    links: [{ label: 'Sign In', href: '/auth/login' }],
+    title: 'Project',
+    links: [
+      {
+        label: 'GitHub',
+        href: 'https://github.com/robertjbass/hackerlab',
+        external: true,
+      },
+      { label: 'Sign In', href: '/auth/login' },
+    ],
   },
 ]

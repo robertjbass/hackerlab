@@ -1,16 +1,40 @@
 # Hackerlab
 
-A batteries-included starter framework for bootstrapping full-stack web applications with [Payload CMS](https://payloadcms.com), deployed on [Vercel](https://vercel.com) with [Neon](https://neon.tech) PostgreSQL. Fork this repo, configure your environment, choose a theme, and ship.
+A batteries-included Next.js + Payload CMS starter template. Clone it, configure your environment, and deploy to Vercel.
 
-## Tech Stack
+> An `npx create-hackerlab` CLI is planned. For now, clone the repo directly.
 
-- **Framework:** Next.js 16 (React 19)
-- **CMS/Backend:** Payload CMS 3
-- **Database:** PostgreSQL 17 (Neon recommended)
-- **Auth:** Auth.js (next-auth v5) with Google and GitHub OAuth
-- **Styling:** Tailwind CSS 4, shadcn/ui, VS Code theme import system
-- **Storage:** Vercel Blob
-- **Language:** TypeScript
+## Quick Start
+
+```bash
+git clone https://github.com/robertjbass/hackerlab.git
+cd hackerlab
+pnpm install
+cp .env.example .env   # then fill in your values
+pnpm dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) for the frontend and [http://localhost:3000/admin](http://localhost:3000/admin) for the admin panel. The first user to sign in is automatically promoted to admin.
+
+## What You Get
+
+- **Next.js 16** (React 19) with App Router
+- **Payload CMS 3** with a full admin panel, collections, and auto-generated TypeScript types
+- **PostgreSQL 17** support (Neon recommended for branch-aware databases)
+- **GitHub and Google OAuth** authentication, plus magic link email sign-in
+- **RBAC user management** with junction-table roles (cleaner than Payload's default system)
+- **Blog** with posts, categories, tags, and drafts
+- **Tailwind CSS 4** with shadcn/ui components
+- **VS Code theme system** — browse, preview, and apply thousands of themes from Open VSX
+- **Open-source logos** — SVG logo components that inherit `currentColor`
+- **Mobile-friendly design** with responsive layouts
+- **Vercel Blob storage** for media uploads
+- **LLM support** via `AGENTS.md` and `CLAUDE.md` for AI-assisted development
+- **Email support** built in
+- **Changelog management** with version bumping scripts and a `/changelog` route
+- **Migration management** — Payload-managed database migrations with dev push mode for rapid iteration
+- **Easy upgrades** — Payload, Next.js, React, and ESLint are independently upgradable
+- **Opinionated dev tooling** — lint rules, type checking, version auditing, codegen scripts
 
 ## Prerequisites
 
@@ -18,29 +42,6 @@ A batteries-included starter framework for bootstrapping full-stack web applicat
 - pnpm 9.x or 10.x
 - A PostgreSQL 17 database (Neon, Supabase, or local)
 - A Vercel Blob store
-
-## Getting Started
-
-```bash
-# Clone and install
-git clone <your-fork-url>
-cd hackerlab
-pnpm install
-
-# Copy the example env file
-cp .env.example .env
-```
-
-Fill in the required values in `.env` (see [Environment Variables](#environment-variables) below), then:
-
-```bash
-# Start the dev server
-pnpm dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) for the frontend and [http://localhost:3000/admin](http://localhost:3000/admin) for the admin panel.
-
-The first user to sign in is automatically promoted to admin.
 
 ## Environment Variables
 
@@ -242,6 +243,16 @@ Nine additional concept logos are viewable at [`/logos`](/logos). All concepts a
 
 The `/changelog` route fetches [`CHANGELOG.md`](CHANGELOG.md) from the public GitHub repo and renders it with `react-markdown`. The page uses ISR with a 1-hour revalidation interval so updates appear without a redeploy.
 
+Version bumping scripts are built in:
+
+```bash
+# Bump patch version (0.4.1 → 0.4.2), update CHANGELOG.md, and commit
+pnpm version:patch
+
+# Bump minor version (0.4.1 → 0.5.0), update CHANGELOG.md, and commit
+pnpm version:minor
+```
+
 ## Documentation
 
 | Guide | Description |
@@ -302,6 +313,19 @@ src/
 | `pnpm codegen` | Regenerate import map and types |
 | `pnpm import-theme` | Import and apply VS Code themes |
 | `pnpm add:ui <name>` | Add a shadcn/ui component |
+| `pnpm check` | Run all checks (versions, lint, types) |
+| `pnpm version:patch` | Bump patch version and update changelog |
+| `pnpm version:minor` | Bump minor version and update changelog |
+
+### `pnpm check`
+
+A single command that runs three checks in sequence:
+
+1. **Version check** — compares installed versions of Payload, Next.js, React, and TypeScript against the latest releases on npm. Flags outdated packages, detects version mismatches across related packages (e.g. all `@payloadcms/*` on the same version), and notes prerelease packages. Prints links to each project's release page for easy upgrading.
+2. **Lint** — runs ESLint across the project.
+3. **Type check** — runs `tsc --noEmit` to verify TypeScript types.
+
+If any check fails, the command exits with a non-zero code and prints a summary showing which checks passed and which failed. Run this before committing to catch issues early.
 
 ## Deployment
 

@@ -71,6 +71,7 @@ export function DashboardTools() {
             Browse bundled themes, search Open VSX for new ones, preview colors,
             and apply directly to your app.
           </p>
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- Payload admin uses full-page nav, not client-side routing */}
           <a href="/admin/theme" style={linkButtonStyle}>
             <svg
               width="16"

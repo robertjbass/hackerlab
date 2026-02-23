@@ -51,7 +51,7 @@ export default function LoginPage() {
         <CardHeader className="text-center">
           <CardTitle className="text-3xl">Sign in</CardTitle>
           <CardDescription>
-            Access your developer tools and settings
+            Sign in to access the admin panel and manage your site
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
