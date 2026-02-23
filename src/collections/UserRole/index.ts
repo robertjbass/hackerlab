@@ -3,6 +3,7 @@ import { type CollectionConfig } from 'payload'
 
 const UserRoleCollection: CollectionConfig<'user_role'> = {
   slug: 'user_role',
+  labels: { singular: 'User Role', plural: 'User Roles' },
   admin: {
     group: 'Admin',
     defaultColumns: ['user', 'role', 'createdAt'],
