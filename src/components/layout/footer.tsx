@@ -58,8 +58,9 @@ export function Footer() {
                       {...(link.external
                         ? { target: '_blank', rel: 'noopener noreferrer' }
                         : {})}
-                      className="inline-block py-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                      className="inline-flex items-center gap-2 py-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
                     >
+                      {link.icon && <link.icon className="h-3.5 w-3.5" />}
                       {link.label}
                     </Link>
                   </li>
