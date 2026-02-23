@@ -1,6 +1,6 @@
 import { admins, selfOrAdmins, adminsOnly } from '@/collections/shared/access'
 import { AuthjsStrategy } from '@/lib/auth/payload-strategy'
-import { authProviderOptions } from '@/collections/User/constants'
+import { authProviderOptions, RoleName } from '@/collections/User/constants'
 import { type CollectionConfig } from 'payload'
 
 const User: CollectionConfig<'user'> = {
@@ -29,6 +29,41 @@ const User: CollectionConfig<'user'> = {
     strategies: [AuthjsStrategy()],
   },
   hooks: {
+    afterChange: [
+      async ({ doc, operation, req }) => {
+        if (operation !== 'create') return
+        const { totalDocs } = await req.payload.count({
+          collection: 'user',
+          req,
+        })
+        if (totalDocs > 1) return
+
+        // First user — find or create the admin role, then assign it
+        let { docs: roles } = await req.payload.find({
+          collection: 'role',
+          where: { name: { equals: RoleName.Admin } },
+          limit: 1,
+          req,
+          overrideAccess: true,
+        })
+        if (roles.length === 0) {
+          const newRole = await req.payload.create({
+            collection: 'role',
+            data: { name: RoleName.Admin },
+            req,
+            overrideAccess: true,
+          })
+          roles = [newRole]
+        }
+
+        await req.payload.create({
+          collection: 'user_role',
+          data: { user: doc.id, role: roles[0].id },
+          req,
+          overrideAccess: true,
+        })
+      },
+    ],
     afterLogout: [
       async () => {
         try {
