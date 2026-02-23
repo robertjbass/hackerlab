@@ -19,12 +19,14 @@ export function Header({ user }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/80 pt-[env(safe-area-inset-top)] backdrop-blur-sm">
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
+    <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-background/70 pt-[env(safe-area-inset-top)] backdrop-blur-xl">
+      <nav className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4 lg:px-8">
         <div className="flex items-center gap-x-12">
-          <Link href="/" className="flex items-center gap-2">
-            <Terminal className="h-8 w-8 text-primary" />
-            <span className="text-xl font-bold text-foreground">
+          <Link href="/" className="flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-linear-to-br from-primary to-primary/70 shadow-lg shadow-primary/20">
+              <Terminal className="h-4.5 w-4.5 text-primary-foreground" />
+            </div>
+            <span className="text-lg font-semibold tracking-tight text-foreground">
               {siteConfig.name}
             </span>
           </Link>
@@ -61,7 +63,7 @@ export function Header({ user }: HeaderProps) {
               >
                 Sign in
               </Link>
-              <Button asChild size="sm">
+              <Button asChild size="sm" className="shadow-lg shadow-primary/20">
                 <Link href="/auth/login">Get Started</Link>
               </Button>
             </>
@@ -82,6 +84,8 @@ export function Header({ user }: HeaderProps) {
           </button>
         </div>
       </nav>
+
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-primary/20 to-transparent" />
 
       {mobileMenuOpen && (
         <div className="lg:hidden">
@@ -126,6 +130,7 @@ export function Header({ user }: HeaderProps) {
                   <Button
                     asChild
                     size="sm"
+                    className="shadow-lg shadow-primary/20"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     <Link href="/auth/login">Get Started</Link>

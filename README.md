@@ -119,7 +119,7 @@ GITHUB_CLIENT_SECRET=your-client-secret
 ### How It Works
 
 - Email is the canonical identity — the same email from different OAuth providers links to one user account
-- The first user to sign in is automatically promoted to admin
+- **First-user admin promotion:** The User collection's `afterChange` hook checks the total user count inside a serializable transaction. If the newly created user is the only one in the database, it automatically assigns the `admin` role via the `user_role` junction table. This runs exactly once and is safe against race conditions.
 - Non-admin users redirect to `/` after login; admins go to `/admin`
 - Both login pages (frontend and admin) dynamically show only the providers you've configured
 

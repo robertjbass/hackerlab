@@ -5,6 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-02-23
+
+### Added
+- Landing page redesign: left-aligned hero, gradient logo squares, tighter `max-w-5xl` layout, numbered feature cards with hover effects, CTA card with blob animations
+- Scroll-reveal-scale animation class for CTA entrance
+- CTA blob drift keyframes (`animate-cta-blob`, `animate-cta-blob-alt`)
+- Dark mode ambient body gradients for depth
+- Smooth scroll behavior on `html`
+- Hero-to-content gradient fade for seamless section transitions
+- `force-static` rendering on homepage
+- Admin theme browser: in-app search, preview, and apply VS Code themes from Open VSX
+- API routes for theme search (`/api/themes/search`), extraction (`/api/themes/extract`), and application (`/api/themes/apply`)
+- Theme VSIX extraction and Open VSX client utilities
+
+### Changed
+- Header: gradient logo icon, `border-white/10`, `backdrop-blur-xl`, shadow glow on CTA button
+- Hero: left-aligned text, `primary` CSS vars instead of hardcoded indigo, repositioned blob, constrained description width
+- Features: raw `<div>` cards instead of `<Card>`, gradient icon containers with hover scale, dot pattern background, numbered items
+- CTA: replaced full-width gradient banner with rounded card, single CTA button, decorative blobs
+- Footer: gradient top line, subtle upward gradient, refined heading styles, flex-between bottom section
+- Upgraded scroll-reveal and hero-entrance easing to `cubic-bezier(0.16, 1, 0.3, 1)`
+- Theme API route refactored to use shared `extractPreviewColors` utility
+- Admin theme preview component rewritten with search, apply, and marketplace integration
+
+### Documentation
+- Documented first-user-admin mechanism in README (afterChange hook, serializable transaction)
+
 ## [0.3.6] - 2026-02-23
 
 ### Fixed

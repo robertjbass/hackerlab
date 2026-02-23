@@ -6,6 +6,7 @@ import {
   Terminal,
   Zap,
 } from '@/components/icons'
+import { ScrollReveal } from '@/components/scroll-reveal'
 
 const features = [
   {
@@ -43,32 +44,39 @@ const features = [
 
 export function Features() {
   return (
-    <section className="py-24 sm:py-32">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto max-w-2xl text-center">
+    <section className="relative py-24 sm:py-32">
+      <div className="pointer-events-none absolute inset-0 bg-dot-pattern opacity-50" />
+      <div className="relative mx-auto max-w-5xl px-6 lg:px-8">
+        <div className="mx-auto mb-4 h-px w-24 bg-linear-to-r from-transparent via-primary/40 to-transparent" />
+        <ScrollReveal className="max-w-xl">
           <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
             Built for developers
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
             Tools that integrate seamlessly into your development workflow
           </p>
-        </div>
-        <div className="mx-auto mt-16 max-w-5xl">
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {features.map((feature) => (
-              <div key={feature.name} className="relative">
-                <div className="flex items-center gap-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                    <feature.icon className="h-5 w-5 text-primary" />
+        </ScrollReveal>
+        <div className="mt-16">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {features.map((feature, index) => (
+              <ScrollReveal key={feature.name} delay={index * 80}>
+                <div className="group card-glow card-hover-lift relative h-full rounded-xl border border-border/50 bg-card/50 p-6 backdrop-blur-sm transition-colors hover:border-primary/30 hover:bg-card">
+                  <span className="absolute right-4 top-4 font-mono text-xs text-primary/20">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                  <div className="flex items-center gap-4">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-primary/30 to-primary/10 shadow-lg shadow-primary/10 transition-transform group-hover:scale-110">
+                      <feature.icon className="h-5 w-5 text-primary" />
+                    </div>
+                    <h3 className="text-base font-semibold text-foreground">
+                      {feature.name}
+                    </h3>
                   </div>
-                  <h3 className="text-base font-semibold text-foreground">
-                    {feature.name}
-                  </h3>
+                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                    {feature.description}
+                  </p>
                 </div>
-                <p className="mt-3 text-sm text-muted-foreground">
-                  {feature.description}
-                </p>
-              </div>
+              </ScrollReveal>
             ))}
           </div>
         </div>
