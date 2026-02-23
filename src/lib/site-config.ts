@@ -31,7 +31,7 @@ export const siteConfig: SiteConfig = {
   tagline: 'Developer Tools for Modern Workflows',
   social: {
     github: {
-      url: 'https://github.com/robertjbass',
+      url: 'https://github.com/robertjbass/hackerlab',
       handle: 'robertjbass',
     },
     x: {

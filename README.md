@@ -125,9 +125,23 @@ GITHUB_CLIENT_SECRET=your-client-secret
 
 ## Theme System
 
-Hackerlab includes a VS Code theme import system that lets you restyle the entire app using any VS Code color theme. Themes map VS Code color tokens to shadcn/ui CSS variables at build time.
+Hackerlab includes a VS Code theme import system that lets you restyle the entire app using any VS Code color theme. A bridge map translates VS Code color tokens (e.g. `editor.background`, `button.background`) into shadcn/ui CSS variables (`--background`, `--primary`, etc.) and rewrites `globals.css`.
 
-### Quick Start
+There are two ways to apply themes: the **admin Theme Manager** (interactive, browser-based) and the **CLI** (scriptable, CI-friendly). Both write to the same files.
+
+### Admin Theme Manager
+
+Navigate to `/admin/theme` in the Payload admin panel to open the interactive Theme Manager.
+
+**Bundled Themes tab** — shows all themes in `src/themes/` as mini VS Code editor previews (activity bar, sidebar, editor pane). Click a card to select it and preview its colors in the admin panel.
+
+**Search Open VSX tab** — search the [Open VSX](https://open-vsx.org) registry for VS Code theme extensions. Click "View Themes" on a result to download the VSIX, extract all theme variants, and display them as previews. Multi-theme extensions (e.g. One Dark Pro) show each variant individually.
+
+**Apply panel** — appears when a theme is selected. Choose the target mode (Light, Dark, or Both) and click "Apply Theme." This writes the resolved colors to `globals.css` and updates `src/themes/active.json`. New themes extracted from Open VSX are saved to `src/themes/` automatically.
+
+> **Dev-only:** Theme application is disabled in production (`NODE_ENV=production` returns 403). The Apply button is grayed out and a warning banner is shown. Run the dev server to apply themes.
+
+### CLI
 
 ```bash
 # List bundled themes
@@ -139,34 +153,15 @@ pnpm import-theme --file src/themes/dracula.json --both
 # Preview the mapping without writing
 pnpm import-theme --file src/themes/tokyo-night.json --both --dry-run
 
-# Restore the original palette
-pnpm import-theme --restore
-```
-
-### Bundled Themes
-
-| Theme | Type |
-|---|---|
-| Dracula | Dark |
-| GitHub Dark | Dark |
-| Monokai | Dark |
-| Nord | Dark |
-| One Dark Pro | Dark |
-| Solarized Light | Light |
-| Tokyo Night | Dark |
-| Ros&eacute; Pine Moon | Dark |
-
-### Importing from the VS Code Marketplace
-
-```bash
-# Search and download interactively
+# Search the VS Code marketplace and download interactively
 pnpm import-theme --vscode "Catppuccin"
 
 # Import from a raw JSON URL
 pnpm import-theme --url https://raw.githubusercontent.com/.../theme.json --both
-```
 
-### Import Options
+# Restore the original palette
+pnpm import-theme --restore
+```
 
 | Flag | Description |
 |---|---|
@@ -189,15 +184,24 @@ pnpm import-theme --file src/themes/solarized-light.json --mode light
 pnpm import-theme --file src/themes/dracula.json --mode dark
 ```
 
-### Admin Panel Theme Preview
+### Bundled Themes
 
-Visit `/admin/theme` in the admin panel to browse all available themes with visual previews. Click any theme to see its color palette, then use the CLI commands shown on the page to apply it.
+| Theme | Type |
+|---|---|
+| Dracula | Dark |
+| GitHub Dark | Dark |
+| Monokai | Dark |
+| Nord | Dark |
+| One Dark Pro | Dark |
+| Solarized Light | Light |
+| Tokyo Night | Dark |
+| Ros&eacute; Pine Moon | Dark |
 
 ### Adding Custom Themes
 
 1. Find a VS Code theme JSON file (from a GitHub repo, VSIX, or the marketplace)
 2. Save it to `src/themes/<name>.json`
-3. Apply it with `pnpm import-theme --file src/themes/<name>.json --both`
+3. Apply it with the admin Theme Manager or `pnpm import-theme --file src/themes/<name>.json --both`
 
 Theme JSON files follow the VS Code theme format:
 
@@ -213,6 +217,22 @@ Theme JSON files follow the VS Code theme format:
   }
 }
 ```
+
+### How It Works
+
+```
+VS Code theme JSON → resolveTheme() → CSS variable map → rewriteGlobalsCss() → globals.css
+```
+
+1. **Bridge map** (`src/lib/theme/bridge-map.ts`) defines which VS Code tokens map to which CSS variables, with fallback chains and derivation rules
+2. **Theme resolver** (`src/lib/theme/theme-resolver.ts`) walks each CSS variable's token chain, derives chart colors from the primary hue, computes contrast colors for foregrounds, and falls back to the default indigo-slate palette
+3. **CSS writer** (`src/lib/theme/css-writer.ts`) patches the `:root` or `.dark` block in `globals.css`, preserving non-color variables (`--radius`, `--font-*`), comments, and formatting
+4. **Active config** (`src/themes/active.json`) tracks which theme is applied to each mode
+5. A one-time backup is created at `globals.css.backup` before the first write
+
+## Changelog
+
+The `/changelog` route fetches [`CHANGELOG.md`](CHANGELOG.md) from the public GitHub repo and renders it with `react-markdown`. The page uses ISR with a 1-hour revalidation interval so updates appear without a redeploy.
 
 ## Documentation
 
@@ -231,7 +251,7 @@ src/
 ├── app/
 │   ├── (frontend)/          # Frontend routes (blog, auth, landing)
 │   ├── (payload)/           # Payload admin routes
-│   └── api/                 # Standalone API routes
+│   └── api/                 # Standalone API routes (themes, auth)
 ├── collections/             # Payload collection configs
 │   ├── User/                # User collection + auth constants
 │   ├── Role/                # Role collection (admin, editor, user)
