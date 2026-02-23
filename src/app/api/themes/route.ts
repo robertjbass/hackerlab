@@ -2,32 +2,14 @@ import { readdirSync, readFileSync, existsSync } from 'fs'
 import { resolve } from 'path'
 import { NextResponse } from 'next/server'
 import type { VSCodeTheme, ActiveThemeConfig } from '@/lib/theme/types'
-import { normalizeHex, isTransparent } from '@/lib/theme/color-utils'
+import { extractPreviewColors } from '@/lib/theme/vsix-extract'
 
 const THEMES_DIR = resolve(process.cwd(), 'src/themes')
 const ACTIVE_CONFIG = resolve(THEMES_DIR, 'active.json')
 
-function extractPreviewColors(colors: VSCodeTheme['colors']) {
-  function pick(...tokens: string[]): string {
-    for (const t of tokens) {
-      const v = colors[t]
-      if (v && !isTransparent(v)) return normalizeHex(v)
-    }
-    return '#333333'
-  }
-
-  return {
-    activityBar: pick('activityBar.background', 'sideBar.background'),
-    sidebar: pick('sideBar.background', 'editor.background'),
-    editor: pick('editor.background'),
-    accent: pick('button.background', 'focusBorder'),
-    text: pick('editor.foreground'),
-  }
-}
-
 export async function GET() {
   if (!existsSync(THEMES_DIR)) {
-    return NextResponse.json({ themes: [], active: {} })
+    return NextResponse.json({ themes: [], active: {}, isDev: process.env.NODE_ENV !== 'production' })
   }
 
   const files = readdirSync(THEMES_DIR).filter(
@@ -54,5 +36,9 @@ export async function GET() {
     }
   }
 
-  return NextResponse.json({ themes, active })
+  return NextResponse.json({
+    themes,
+    active,
+    isDev: process.env.NODE_ENV !== 'production',
+  })
 }

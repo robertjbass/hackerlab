@@ -1,13 +1,17 @@
+import { auth } from '@/lib/auth'
 import { Hero } from '@/components/landing/hero'
 import { Features } from '@/components/landing/features'
 import { CTA } from '@/components/landing/cta'
 
-export default function HomePage() {
+export default async function HomePage() {
+  const session = await auth()
+  const loggedIn = !!session?.user
+
   return (
     <>
-      <Hero />
+      <Hero loggedIn={loggedIn} />
       <Features />
-      <CTA />
+      {!loggedIn && <CTA />}
     </>
   )
 }

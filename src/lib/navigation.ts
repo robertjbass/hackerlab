@@ -9,12 +9,18 @@ type FooterNavGroup = {
   links: NavLink[]
 }
 
-export const mainNavLinks: NavLink[] = [{ label: 'Blog', href: '/blog' }]
+export const mainNavLinks: NavLink[] = [
+  { label: 'Blog', href: '/blog' },
+  { label: 'Changelog', href: '/changelog' },
+]
 
 export const footerNavGroups: FooterNavGroup[] = [
   {
     title: 'Resources',
-    links: [{ label: 'Blog', href: '/blog' }],
+    links: [
+      { label: 'Blog', href: '/blog' },
+      { label: 'Changelog', href: '/changelog' },
+    ],
   },
   {
     title: 'Account',

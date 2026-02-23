@@ -1,35 +1,40 @@
 import Link from 'next/link'
 import { ArrowRight } from '@/components/icons'
 import { Button } from '@/components/ui/button'
+import { ScrollReveal } from '@/components/scroll-reveal'
 
 export function CTA() {
   return (
-    <section className="bg-primary py-16">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-primary-foreground sm:text-4xl">
-            Ready to supercharge your workflow?
-          </h2>
-          <p className="mt-4 text-lg text-primary-foreground/80">
-            Get started today and join thousands of developers using our tools.
-          </p>
-          <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Button asChild size="lg" variant="secondary">
-              <Link href="/auth/login">
-                Get Started Free
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="border-primary-foreground/30 bg-transparent text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
-            >
-              <Link href="/blog">Read the Blog</Link>
-            </Button>
+    <section className="py-24 sm:py-32">
+      <div className="mx-auto max-w-5xl px-6 lg:px-8">
+        <div className="mx-auto mb-12 h-px w-24 bg-linear-to-r from-transparent via-primary/40 to-transparent" />
+        <ScrollReveal className="scroll-reveal-scale">
+          <div className="card-glow relative overflow-hidden rounded-2xl border border-primary/30 bg-linear-to-br from-primary/10 via-card to-card/50 p-10 md:p-16">
+            <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-primary/10 blur-3xl animate-cta-blob" />
+            <div className="pointer-events-none absolute -bottom-20 -left-20 h-48 w-48 rounded-full bg-primary/5 blur-3xl animate-cta-blob-alt" />
+            <div className="relative max-w-xl">
+              <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+                Ready to supercharge your workflow?
+              </h2>
+              <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
+                Get started today and join thousands of developers using our
+                tools.
+              </p>
+              <div className="mt-8">
+                <Button
+                  asChild
+                  size="lg"
+                  className="shadow-xl shadow-primary/25"
+                >
+                  <Link href="/auth/login">
+                    Get Started
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              </div>
+            </div>
           </div>
-        </div>
+        </ScrollReveal>
       </div>
     </section>
   )
