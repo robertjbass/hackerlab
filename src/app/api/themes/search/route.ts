@@ -15,9 +15,15 @@ export async function POST(request: Request) {
       )
     }
 
-    const result = await searchOpenVSX(body.query, {
-      offset: body.offset ?? 0,
-    })
+    const offset = body.offset ?? 0
+    if (typeof offset !== 'number' || !Number.isInteger(offset) || offset < 0) {
+      return NextResponse.json(
+        { error: 'Invalid offset: must be a non-negative integer' },
+        { status: 400 },
+      )
+    }
+
+    const result = await searchOpenVSX(body.query, { offset })
 
     return NextResponse.json(result)
   } catch (error) {

@@ -914,7 +914,9 @@ export function ThemePreview() {
                     {result.downloadCount.toLocaleString()} downloads
                   </span>
                   {result.averageRating !== null && (
-                    <span>{'*'.repeat(Math.round(result.averageRating))} rating</span>
+                    <span aria-label={`${result.averageRating.toFixed(1)} out of 5 stars`}>
+                      {result.averageRating.toFixed(1)}/5
+                    </span>
                   )}
                 </div>
 

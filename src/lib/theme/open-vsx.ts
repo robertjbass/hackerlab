@@ -45,9 +45,23 @@ export async function searchOpenVSX(
     sortOrder: 'desc',
   })
 
-  const response = await fetch(
-    `https://open-vsx.org/api/-/search?${params.toString()}`,
-  )
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), 10_000)
+
+  let response: Response
+  try {
+    response = await fetch(
+      `https://open-vsx.org/api/-/search?${params.toString()}`,
+      { signal: controller.signal },
+    )
+  } catch (error) {
+    clearTimeout(timer)
+    if (error instanceof Error && error.name === 'AbortError') {
+      throw new Error('Open VSX search timed out', { cause: error })
+    }
+    throw error
+  }
+  clearTimeout(timer)
 
   if (!response.ok) {
     throw new Error(`Open VSX search failed: ${response.status}`)
@@ -55,19 +69,21 @@ export async function searchOpenVSX(
 
   const data = (await response.json()) as OpenVSXSearchResponse
 
-  const results: OpenVSXExtension[] = data.extensions.map((ext) => ({
-    name: ext.name,
-    namespace: ext.namespace,
-    displayName: ext.displayName || ext.name,
-    description: ext.description || '',
-    version: ext.version,
-    downloadCount: ext.downloadCount ?? 0,
-    averageRating: ext.averageRating ?? null,
-    files: {
-      download: ext.files?.download ?? '',
-      icon: ext.files?.icon,
-    },
-  }))
+  const results: OpenVSXExtension[] = data.extensions
+    .filter((ext) => ext.files?.download)
+    .map((ext) => ({
+      name: ext.name,
+      namespace: ext.namespace,
+      displayName: ext.displayName || ext.name,
+      description: ext.description || '',
+      version: ext.version,
+      downloadCount: ext.downloadCount ?? 0,
+      averageRating: ext.averageRating ?? null,
+      files: {
+        download: ext.files!.download!,
+        icon: ext.files?.icon,
+      },
+    }))
 
   return { results, totalSize: data.totalSize }
 }

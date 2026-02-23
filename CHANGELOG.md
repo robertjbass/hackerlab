@@ -5,6 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.1] - 2026-02-23
+
+### Added
+- `/changelog` route: fetches and renders `CHANGELOG.md` from GitHub with ISR (1-hour revalidation)
+- Changelog links in header nav and footer Resources section
+- `react-markdown` and `remark-gfm` dependencies for markdown rendering
+
+### Fixed
+- Hero "View on GitHub" button now links to the repo instead of the user profile
+
+### Security
+- Theme apply API: slug validation prevents path traversal attacks
+- Theme extract API: strict URL parsing (hostname check instead of `startsWith`)
+- Theme extract API: download timeout (30s) and size limit (50MB) for VSIX files
+- Theme list API: malformed theme JSON files are skipped instead of crashing the endpoint
+- VSIX extract: descriptive error on malformed `package.json` inside VSIX
+- Theme apply API: malformed theme JSON returns 400 instead of 500
+- Open VSX search: 10s fetch timeout via AbortController
+- Open VSX search: extensions without download URLs are filtered out
+- Theme search API: offset parameter validated as non-negative integer
+
+### Improved
+- Star rating display in admin theme browser uses numeric format for accessibility
+- Safari compatibility: added `-webkit-mask` prefixes for card glow effect
+- Removed duplicate `revalidate` setting in changelog page (page-level export is single source of truth)
+- `ScrollReveal` component cleans up `setTimeout` on unmount to prevent stale callbacks
+
 ## [0.4.0] - 2026-02-23
 
 ### Added
