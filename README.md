@@ -337,3 +337,4 @@ Hackerlab is designed for Vercel deployment with Neon PostgreSQL:
 4. Deploy
 
 For the database, create a Neon project at [neon.tech](https://neon.tech) and use the connection string as `DATABASE_URL`.
+# offlabelinsight
